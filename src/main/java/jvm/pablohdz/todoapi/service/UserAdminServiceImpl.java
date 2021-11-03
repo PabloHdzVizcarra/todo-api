@@ -43,7 +43,7 @@ public class UserAdminServiceImpl implements UserAdminService
                 email
         );
 
-        UserAdmin savedUser = repository.save(entityUserAdmin);
+        repository.save(entityUserAdmin);
     }
 
     private void checkUserAdminRequestDataValid(UserAdminRequest userAdminRequest)
