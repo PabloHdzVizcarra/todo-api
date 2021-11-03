@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jvm.pablohdz.todoapi.UserAdminService;
+import jvm.pablohdz.todoapi.service.UserAdminService;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController
 {
-    private UserAdminService service;
+    private final UserAdminService service;
 
     @Autowired
     public AuthController(UserAdminService service)

@@ -2,10 +2,23 @@ package jvm.pablohdz.todoapi.dto;
 
 public class UserAdminRequest
 {
+
     private String name;
     private String lastname;
     private String username;
     private String email;
+
+    public UserAdminRequest()
+    {
+    }
+
+    public UserAdminRequest(String name, String lastname, String username, String email)
+    {
+        this.name = name;
+        this.lastname = lastname;
+        this.username = username;
+        this.email = email;
+    }
 
     public String getName()
     {

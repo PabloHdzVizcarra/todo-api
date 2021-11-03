@@ -1,4 +1,4 @@
-package jvm.pablohdz.todoapi;
+package jvm.pablohdz.todoapi.exceptions;
 
 public class DuplicateUserData extends RuntimeException
 {
