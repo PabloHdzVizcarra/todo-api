@@ -5,19 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
+import jvm.pablohdz.todoapi.components.ValidatorRequest;
+import jvm.pablohdz.todoapi.service.UserAdminServiceImpl;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -26,11 +26,13 @@ class UserAdminServiceImplTest
     @Mock
     private UserAdminRepository repository;
     private UserAdminServiceImpl underTest;
+    @Mock
+    private ValidatorRequest validatorRequest;
 
     @BeforeEach
     void setUp()
     {
-        underTest = new UserAdminServiceImpl(repository);
+        underTest = new UserAdminServiceImpl(repository, validatorRequest);
     }
 
     @Test
