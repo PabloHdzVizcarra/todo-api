@@ -47,15 +47,5 @@ class ValidatorRequestTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void givenValidEntity_whenTryValidate()
-    {
-        UserAdminRequest userAdminRequest = new UserAdminRequest(
-                "James", "Gosling", "javaLord", "james-gosling@java.com");
-
-        assertThatThrownBy(() -> validatorRequest.checkUserAdminRequest(userAdminRequest))
-                .doesNotThrowAnyException();
-    }
-
 
 }
