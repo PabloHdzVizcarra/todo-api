@@ -21,7 +21,7 @@ class ValidatorRequestTest
     void givenBadName_whenTryValidate_thenThrownException()
     {
         UserAdminRequest userAdminRequest = new UserAdminRequest(
-                null, null, null, null);
+                null, null, null, null, "admin123");
 
         assertThatThrownBy(() -> validatorRequest.checkUserAdminRequest(userAdminRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -31,7 +31,7 @@ class ValidatorRequestTest
     void givenBadUsername_whenTryValidate_thenThrownException()
     {
         UserAdminRequest userAdminRequest = new UserAdminRequest(
-                "James", "", null, null);
+                "James", "", null, null, "admin123");
 
         assertThatThrownBy(() -> validatorRequest.checkUserAdminRequest(userAdminRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -41,11 +41,19 @@ class ValidatorRequestTest
     void givenBadEmail_whenTryValidate_thenThrownException()
     {
         UserAdminRequest userAdminRequest = new UserAdminRequest(
-                "James", "", "Gosling", "bademail.com");
+                "James", "", "Gosling", "bademail.com", "admin123");
 
         assertThatThrownBy(() -> validatorRequest.checkUserAdminRequest(userAdminRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    void givenBadPassword_whenValidate_thenThrownException()
+    {
+        UserAdminRequest userAdminRequest = new UserAdminRequest(
+                "James", "", "Gosling", "bademail.com", "");
 
+        assertThatThrownBy(() -> validatorRequest.checkUserAdminRequest(userAdminRequest))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

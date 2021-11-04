@@ -43,7 +43,8 @@ class UserAdminServiceImplTest
                 "James",
                 "Gosling",
                 "java-creator",
-                duplicatedEmail
+                duplicatedEmail,
+                "admin123"
         );
         given(repository.findByEmail(duplicatedEmail))
                 .willReturn(Optional.of(new UserAdmin()));

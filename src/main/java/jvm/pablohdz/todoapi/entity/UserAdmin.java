@@ -29,6 +29,9 @@ public class UserAdmin
     @Column(name = "user_admin_name", nullable = false)
     private String name;
 
+    @Column(name = "user_admin_password", nullable = false)
+    private String password;
+
     @Column(name = "user_admin_lastname")
     private String lastname;
 
@@ -48,9 +51,16 @@ public class UserAdmin
     {
     }
 
-    public UserAdmin(String name, String lastname, String username, String email)
+    public UserAdmin(
+            String name,
+            String password,
+            String lastname,
+            String username,
+            String email
+    )
     {
         this.name = name;
+        this.password = password;
         this.lastname = lastname;
         this.username = username;
         this.email = email;
@@ -58,6 +68,8 @@ public class UserAdmin
         setupApiKey();
         setupCreatedAt();
     }
+
+
 
     private void setupCreatedAt()
     {
@@ -137,5 +149,15 @@ public class UserAdmin
     public void setCreatedAt(Timestamp createdAt)
     {
         this.createdAt = createdAt;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
     }
 }

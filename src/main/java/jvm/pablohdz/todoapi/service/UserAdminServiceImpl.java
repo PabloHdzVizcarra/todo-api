@@ -38,7 +38,7 @@ public class UserAdminServiceImpl implements UserAdminService
 
         UserAdmin entityUserAdmin = new UserAdmin(
                 userAdminRequest.getName(),
-                userAdminRequest.getLastname(),
+                "admin123", userAdminRequest.getLastname(),
                 userAdminRequest.getUsername(),
                 email
         );

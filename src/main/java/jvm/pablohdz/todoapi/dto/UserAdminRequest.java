@@ -2,22 +2,29 @@ package jvm.pablohdz.todoapi.dto;
 
 public class UserAdminRequest
 {
-
     private String name;
     private String lastname;
     private String username;
     private String email;
+    private String password;
 
     public UserAdminRequest()
     {
     }
 
-    public UserAdminRequest(String name, String lastname, String username, String email)
+    public UserAdminRequest(
+            String name,
+            String lastname,
+            String username,
+            String email,
+            String password
+    )
     {
         this.name = name;
         this.lastname = lastname;
         this.username = username;
         this.email = email;
+        this.password = password;
     }
 
     public String getName()
@@ -58,5 +65,15 @@ public class UserAdminRequest
     public void setEmail(String email)
     {
         this.email = email;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
     }
 }
