@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -28,11 +29,13 @@ class UserAdminServiceImplTest
     private UserAdminServiceImpl underTest;
     @Mock
     private ValidatorRequest validatorRequest;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp()
     {
-        underTest = new UserAdminServiceImpl(repository, validatorRequest);
+        underTest = new UserAdminServiceImpl(repository, validatorRequest, passwordEncoder);
     }
 
     @Test

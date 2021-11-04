@@ -1,6 +1,7 @@
 package jvm.pablohdz.todoapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,15 +17,18 @@ public class UserAdminServiceImpl implements UserAdminService
 {
     private final UserAdminRepository repository;
     private final ValidatorRequest validatorRequest;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserAdminServiceImpl(
             UserAdminRepository repository,
-            ValidatorRequest validatorRequest
+            ValidatorRequest validatorRequest,
+            PasswordEncoder passwordEncoder
     )
     {
         this.repository = repository;
         this.validatorRequest = validatorRequest;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,9 +40,12 @@ public class UserAdminServiceImpl implements UserAdminService
         if (userExists(email))
             throw new DuplicateUserData("The email: " + email + " already registered");
 
+        String hashPassword = passwordEncoder.encode(userAdminRequest.getPassword());
+
         UserAdmin entityUserAdmin = new UserAdmin(
                 userAdminRequest.getName(),
-                "admin123", userAdminRequest.getLastname(),
+                hashPassword,
+                userAdminRequest.getLastname(),
                 userAdminRequest.getUsername(),
                 email
         );
