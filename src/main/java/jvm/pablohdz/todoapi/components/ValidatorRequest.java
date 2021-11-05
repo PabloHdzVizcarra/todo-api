@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.regex.Pattern;
 
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
+import jvm.pablohdz.todoapi.dto.UserSignInRequest;
 
 @Component
 public class ValidatorRequest
@@ -28,20 +29,63 @@ public class ValidatorRequest
         String email = userAdminRequest.getEmail();
         String password = userAdminRequest.getPassword();
 
-        if (name == null || name.length() < 3)
-            throw new IllegalArgumentException("The name: " + name + " is not valid, please check");
+        if (isMoreLengthThat(name, 3))
+            thrownInvalidLength(name, 3);
 
-        if (username == null || username.length() < 6)
-            throw new IllegalArgumentException("The username: " + username +
-                    " is not valid, please check");
+        if (isMoreLengthThat(username, 6))
+            thrownInvalidLength(username, 6);
 
-        if (password == null || password.length() < 8)
-            throw new IllegalArgumentException("The password is not valid, must be length greater" +
-                    " that eight characters");
+        if (isMoreLengthThat(password, 8))
+            throwInvalidPassword();
 
-        if (email == null || !compile.matcher(email).matches())
-            throw new IllegalArgumentException("The email: " + email +
-                    " is not valid, please check");
+        if (isValidEmail(email, !compile.matcher(email).matches()))
+        {
+            thrownInvalidEmail(email);
+        }
 
+    }
+
+    private void thrownInvalidLength(String name, int length)
+    {
+        throw new IllegalArgumentException("the property: " + name +
+                " must be greater length that: " + length);
+    }
+
+    public void verifyUserSignInRequest(UserSignInRequest dataRequest)
+    {
+        String email = dataRequest.getEmail();
+        String password = dataRequest.getPassword();
+        Pattern compile = Pattern.compile(
+                "^[A-Za-z0-9+_.-]+@(.+)$",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        if (isMoreLengthThat(password, 8))
+            throwInvalidPassword();
+
+        if (isValidEmail(email, !compile.matcher(email).matches()))
+            thrownInvalidEmail(email);
+    }
+
+    private void thrownInvalidEmail(String email)
+    {
+        throw new IllegalArgumentException("The email: " + email +
+                " is not valid, please check this email");
+    }
+
+    private boolean isValidEmail(String email, boolean b)
+    {
+        return email == null || b;
+    }
+
+    private void throwInvalidPassword()
+    {
+        throw new IllegalArgumentException("The password is not valid, must be length greater" +
+                " that eight characters");
+    }
+
+    private boolean isMoreLengthThat(String text, int i)
+    {
+        return (text == null || text.length() < i);
     }
 }
