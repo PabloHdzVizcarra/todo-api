@@ -50,15 +50,22 @@ public class SetupDataLoader implements
         roleRepository.save(roleUser);
 
         RoleUser masterRole = roleRepository.findByName(Role.ROLE_MASTER);
+        RoleUser userRole = roleRepository.findByName(Role.ROLE_USER);
 
-        UserAdmin adminUser = new UserAdmin(
+        UserAdmin masterUser = new UserAdmin(
                 "James", "admin123", "Gosling",
                 "java-father", "james@java.com"
         );
 
-        adminUser.setRoles(List.of(masterRole));
+        UserAdmin normalUser = new UserAdmin("Vlad", "admin123", "Mihalcea",
+                "javaHibernate", "java@champion.com"
+        );
 
-        UserAdmin userSaved = userAdminRepository.save(adminUser);
+
+        normalUser.setRoles(List.of(userRole));
+        masterUser.setRoles(List.of(masterRole));
+        userAdminRepository.save(masterUser);
+        userAdminRepository.save(normalUser);
 
         ALREADY_SETUP = true;
     }
