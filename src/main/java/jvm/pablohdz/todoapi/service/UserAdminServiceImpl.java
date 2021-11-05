@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
+import jvm.pablohdz.todoapi.dto.UserSignInRequest;
 import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
 import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
@@ -60,6 +61,12 @@ public class UserAdminServiceImpl implements UserAdminService
         );
 
         repository.save(entityUserAdmin);
+    }
+
+    @Override
+    public void signIn(UserSignInRequest dataRequest)
+    {
+        validatorRequest.verifyUserSignInRequest(dataRequest);
     }
 
     private void checkUserAdminRequestDataValid(UserAdminRequest userAdminRequest)

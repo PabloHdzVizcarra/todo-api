@@ -84,8 +84,8 @@ public class ValidatorRequest
                 " that eight characters");
     }
 
-    private boolean isMoreLengthThat(String text, int i)
+    private boolean isMoreLengthThat(String text, int length)
     {
-        return (text == null || text.length() < i);
+        return (text == null || text.length() < length);
     }
 }
