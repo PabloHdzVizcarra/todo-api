@@ -87,6 +87,26 @@ public class UserAdmin
         setupRoles();
     }
 
+    public UserAdmin(
+            String name,
+            String password,
+            String lastname,
+            String username,
+            String email,
+            Collection<RoleUser> roles
+    )
+    {
+        this.name = name;
+        this.password = password;
+        this.lastname = lastname;
+        this.username = username;
+        this.email = email;
+        this.roles = roles;
+
+        setupApiKey();
+        setupCreatedAt();
+    }
+
     private void setupRoles()
     {
         this.roles = new ArrayList<>();
