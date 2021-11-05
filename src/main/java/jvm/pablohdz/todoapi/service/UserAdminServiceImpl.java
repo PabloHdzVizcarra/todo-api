@@ -20,7 +20,7 @@ import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 @Service
 public class UserAdminServiceImpl implements UserAdminService
 {
-    private final UserAdminRepository repository;
+    private final UserAdminRepository userRepository;
     private final ValidatorRequest validatorRequest;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -33,7 +33,7 @@ public class UserAdminServiceImpl implements UserAdminService
             RoleRepository roleRepository
     )
     {
-        this.repository = repository;
+        this.userRepository = repository;
         this.validatorRequest = validatorRequest;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -60,13 +60,36 @@ public class UserAdminServiceImpl implements UserAdminService
                 List.of(adminRole)
         );
 
-        repository.save(entityUserAdmin);
+        userRepository.save(entityUserAdmin);
     }
 
     @Override
     public void signIn(UserSignInRequest dataRequest)
     {
-        validatorRequest.verifyUserSignInRequest(dataRequest);
+        String email = dataRequest.getEmail();
+        checkRequestDataUserSignIn(dataRequest);
+        userIsRegistered(email);
+
+    }
+
+    private void userIsRegistered(String email)
+    {
+        Optional<UserAdmin> foundUser = userRepository.findByEmail(email);
+
+        if (foundUser.isEmpty())
+            throw new IllegalArgumentException("The user registered with email: " + email +
+                    " is not exists");
+    }
+
+    private void checkRequestDataUserSignIn(UserSignInRequest dataRequest)
+    {
+        try
+        {
+            validatorRequest.verifyUserSignInRequest(dataRequest);
+        } catch (Exception e)
+        {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     private void checkUserAdminRequestDataValid(UserAdminRequest userAdminRequest)
@@ -82,7 +105,7 @@ public class UserAdminServiceImpl implements UserAdminService
 
     private boolean userExists(String email)
     {
-        Optional<UserAdmin> foundUser = repository.findByEmail(email);
+        Optional<UserAdmin> foundUser = userRepository.findByEmail(email);
         return foundUser.isPresent();
     }
 }
