@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
+import jvm.pablohdz.todoapi.dto.UserSignInRequest;
+import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.service.UserAdminServiceImpl;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
@@ -19,6 +21,7 @@ import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 
@@ -60,5 +63,19 @@ class UserAdminServiceImplTest
         assertThatThrownBy(() -> underTest.register(userAdminRequest))
                 .hasMessageContaining(duplicatedEmail)
                 .isInstanceOf(DuplicateUserData.class);
+    }
+
+    @Test
+    void givenUserNotRegistered_whenTrySignIn_thenThrowException()
+    {
+        UserSignInRequest request =
+                new UserSignInRequest("invalid@email.com", "admin123");
+
+        given(repository.findByEmail(anyString()))
+                .willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> underTest.signIn(request))
+                .hasMessageContaining("email")
+                .isInstanceOf(DataNotFoundException.class);
     }
 }

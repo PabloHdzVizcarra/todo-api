@@ -11,6 +11,7 @@ import jvm.pablohdz.todoapi.components.ValidatorRequest;
 import jvm.pablohdz.todoapi.dto.UserSignInRequest;
 import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
+import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
@@ -77,7 +78,7 @@ public class UserAdminServiceImpl implements UserAdminService
         Optional<UserAdmin> foundUser = userRepository.findByEmail(email);
 
         if (foundUser.isEmpty())
-            throw new IllegalArgumentException("The user registered with email: " + email +
+            throw new DataNotFoundException("The user registered with email: " + email +
                     " is not exists");
     }
 
