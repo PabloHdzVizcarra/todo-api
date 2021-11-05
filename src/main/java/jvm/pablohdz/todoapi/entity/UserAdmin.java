@@ -4,12 +4,20 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
@@ -47,6 +55,15 @@ public class UserAdmin
     @Column(name = "user_admin_created_at", nullable = false)
     private Timestamp createdAt;
 
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "user_admin_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "role_user_id"))
+    private Collection<RoleUser> roles;
+
     public UserAdmin()
     {
     }
@@ -67,9 +84,13 @@ public class UserAdmin
 
         setupApiKey();
         setupCreatedAt();
+        setupRoles();
     }
 
-
+    private void setupRoles()
+    {
+        this.roles = new ArrayList<>();
+    }
 
     private void setupCreatedAt()
     {
@@ -159,5 +180,15 @@ public class UserAdmin
     public void setPassword(String password)
     {
         this.password = password;
+    }
+
+    public Collection<RoleUser> getRoles()
+    {
+        return roles;
+    }
+
+    public void setRoles(Collection<RoleUser> roles)
+    {
+        this.roles = roles;
     }
 }
