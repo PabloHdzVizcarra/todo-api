@@ -26,6 +26,7 @@ public class ValidatorRequest
         String name = userAdminRequest.getName();
         String username = userAdminRequest.getUsername();
         String email = userAdminRequest.getEmail();
+        String password = userAdminRequest.getPassword();
 
         if (name == null || name.length() < 3)
             throw new IllegalArgumentException("The name: " + name + " is not valid, please check");
@@ -34,8 +35,13 @@ public class ValidatorRequest
             throw new IllegalArgumentException("The username: " + username +
                     " is not valid, please check");
 
+        if (password == null || password.length() < 8)
+            throw new IllegalArgumentException("The password is not valid, must be length greater" +
+                    " that eight characters");
+
         if (email == null || !compile.matcher(email).matches())
             throw new IllegalArgumentException("The email: " + email +
                     " is not valid, please check");
+
     }
 }

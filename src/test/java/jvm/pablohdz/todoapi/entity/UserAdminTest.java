@@ -12,7 +12,8 @@ class UserAdminTest
     @Test
     void givenValueEntity_whenTryInstance_thenReturnFullEntity()
     {
-        UserAdmin userAdmin = new UserAdmin("envy", "shine", "c8PSWRwR", "test@email.com");
+        UserAdmin userAdmin = new UserAdmin("envy", "admin123", "shine", "c8PSWRwR", "test@email" +
+                ".com");
 
         UUID actualApiKey = userAdmin.getApiKey();
         Timestamp actualCreatedAt = userAdmin.getCreatedAt();

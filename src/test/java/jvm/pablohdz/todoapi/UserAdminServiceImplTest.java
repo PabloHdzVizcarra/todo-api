@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
+import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.service.UserAdminServiceImpl;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
@@ -28,11 +30,17 @@ class UserAdminServiceImplTest
     private UserAdminServiceImpl underTest;
     @Mock
     private ValidatorRequest validatorRequest;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private RoleRepository roleRepository;
 
     @BeforeEach
     void setUp()
     {
-        underTest = new UserAdminServiceImpl(repository, validatorRequest);
+        underTest = new UserAdminServiceImpl(repository, validatorRequest, passwordEncoder,
+                roleRepository
+        );
     }
 
     @Test
@@ -43,7 +51,8 @@ class UserAdminServiceImplTest
                 "James",
                 "Gosling",
                 "java-creator",
-                duplicatedEmail
+                duplicatedEmail,
+                "admin123"
         );
         given(repository.findByEmail(duplicatedEmail))
                 .willReturn(Optional.of(new UserAdmin()));
