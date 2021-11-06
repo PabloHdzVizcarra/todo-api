@@ -17,4 +17,8 @@ public interface UserAdminRepository extends JpaRepository<UserAdmin, UUID>
     @Query(value = "SELECT * FROM user_admin u WHERE u.user_admin_email = :email",
             nativeQuery = true)
     Optional<UserAdmin> findByEmail(@Param("email") String email);
+
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM user_admin u WHERE u.user_admin_username = :username")
+    UserAdmin findByUsername(@Param("username") String username);
 }
