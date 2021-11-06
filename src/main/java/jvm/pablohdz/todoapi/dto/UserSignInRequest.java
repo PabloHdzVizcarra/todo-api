@@ -9,9 +9,9 @@ public class UserSignInRequest
     {
     }
 
-    public UserSignInRequest(String email, String password)
+    public UserSignInRequest(String username, String password)
     {
-        this.username = email;
+        this.username = username;
         this.password = password;
     }
 

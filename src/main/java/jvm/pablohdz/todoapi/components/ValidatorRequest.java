@@ -53,7 +53,7 @@ public class ValidatorRequest
 
     public void verifyUserSignInRequest(UserSignInRequest dataRequest)
     {
-        String email = dataRequest.getEmail();
+        String username = dataRequest.getUsername();
         String password = dataRequest.getPassword();
         Pattern compile = Pattern.compile(
                 "^[A-Za-z0-9+_.-]+@(.+)$",
@@ -63,8 +63,8 @@ public class ValidatorRequest
         if (isMoreLengthThat(password, 8))
             throwInvalidPassword();
 
-        if (isValidEmail(email, !compile.matcher(email).matches()))
-            thrownInvalidEmail(email);
+        if (isMoreLengthThat(username, 6))
+            thrownInvalidLength(username, 6);
     }
 
     private void thrownInvalidEmail(String email)

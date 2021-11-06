@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
 import jvm.pablohdz.todoapi.dto.UserSignInRequest;
@@ -83,7 +84,10 @@ public class UserAdminServiceImpl implements UserAdminService
         String username = dataRequest.getUsername();
         String password = dataRequest.getPassword();
         checkRequestDataUserSignIn(dataRequest);
-        userIsRegistered(username);
+        UserAdmin userRegistered = userIsRegistered(username);
+        UUID apiKey = userRegistered.getApiKey();
+
+        verifyPasswordsIsEquals(password, userRegistered.getPassword());
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(username, password);
@@ -91,17 +95,26 @@ public class UserAdminServiceImpl implements UserAdminService
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(username);
         Instant expiresAt = Instant.now().plusMillis(jwtProvider.getExpirationMillis());
-        return AuthenticationResponse.of(
-                token, authenticationToken.getName(), expiresAt);
+
+        return AuthenticationResponse.withApiKey(
+                token, authenticationToken.getName(), expiresAt, apiKey);
     }
 
-    private void userIsRegistered(String username)
+    private void verifyPasswordsIsEquals(String currentPassword, String password)
     {
-        Optional<UserAdmin> foundUser = userRepository.findByEmail(username);
+        if (!passwordEncoder.matches(currentPassword, password))
+            throw new IllegalArgumentException("The passwords not must be equals, please check");
+    }
+
+    private UserAdmin userIsRegistered(String username)
+    {
+        Optional<UserAdmin> foundUser = userRepository.findByUsername(username);
 
         if (foundUser.isEmpty())
             throw new DataNotFoundException("The user registered with username: " + username +
                     " is not exists");
+
+        return foundUser.get();
     }
 
     private void checkRequestDataUserSignIn(UserSignInRequest dataRequest)

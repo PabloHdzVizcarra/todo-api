@@ -73,7 +73,7 @@ public class JwtProviderImpl implements JwtProvider
     @Override
     public Long getExpirationMillis()
     {
-        return null;
+        return passwordStorage.getJwtExpirationTimeInMillis();
     }
 
     @Override

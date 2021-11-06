@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
@@ -74,16 +75,35 @@ class UserAdminServiceImplTest
     }
 
     @Test
-    void givenUserNotRegistered_whenTrySignIn_thenThrowException()
+    void givenUserNotRegistered_whenSignIn_thenThrowException()
     {
         UserSignInRequest request =
-                new UserSignInRequest("invalid@email.com", "admin123");
+                new UserSignInRequest("wrongUsername", "admin123");
 
-        given(repository.findByEmail(anyString()))
+        given(repository.findByUsername(anyString()))
                 .willReturn(Optional.empty());
 
         assertThatThrownBy(() -> underTest.signIn(request))
-                .hasMessageContaining("email")
                 .isInstanceOf(DataNotFoundException.class);
+    }
+
+    @Test
+    void givenWrongPasswords_whenSignInUser_thenThrownException()
+    {
+        UserSignInRequest requestData =
+                new UserSignInRequest("jamesJava", "wrongPassword");
+
+        UserAdmin mockUserAdmin = new UserAdmin("james", "admin123", "gosling",
+                "jamesJava", "test@test.com", new ArrayList<>()
+        );
+
+        given(repository.findByUsername(anyString()))
+                .willReturn(Optional.of(mockUserAdmin));
+
+        given(passwordEncoder.matches(requestData.getPassword(), mockUserAdmin.getPassword()))
+                .willReturn(false);
+
+        assertThatThrownBy(() -> underTest.signIn(requestData))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
