@@ -55,10 +55,6 @@ public class ValidatorRequest
     {
         String username = dataRequest.getUsername();
         String password = dataRequest.getPassword();
-        Pattern compile = Pattern.compile(
-                "^[A-Za-z0-9+_.-]+@(.+)$",
-                Pattern.CASE_INSENSITIVE
-        );
 
         if (isMoreLengthThat(password, 8))
             throwInvalidPassword();
