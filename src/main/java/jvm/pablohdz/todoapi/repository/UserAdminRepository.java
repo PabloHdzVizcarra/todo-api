@@ -20,5 +20,5 @@ public interface UserAdminRepository extends JpaRepository<UserAdmin, UUID>
 
     @Query(nativeQuery = true,
             value = "SELECT * FROM user_admin u WHERE u.user_admin_username = :username")
-    UserAdmin findByUsername(@Param("username") String username);
+    Optional<UserAdmin> findByUsername(@Param("username") String username);
 }

@@ -2,7 +2,7 @@ package jvm.pablohdz.todoapi.dto;
 
 public class UserSignInRequest
 {
-    private String email;
+    private String username;
     private String password;
 
     public UserSignInRequest()
@@ -11,18 +11,18 @@ public class UserSignInRequest
 
     public UserSignInRequest(String email, String password)
     {
-        this.email = email;
+        this.username = email;
         this.password = password;
     }
 
-    public String getEmail()
+    public String getUsername()
     {
-        return email;
+        return username;
     }
 
-    public void setEmail(String email)
+    public void setUsername(String username)
     {
-        this.email = email;
+        this.username = username;
     }
 
     public String getPassword()
