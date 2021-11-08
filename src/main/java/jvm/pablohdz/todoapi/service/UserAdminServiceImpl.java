@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
+import jvm.pablohdz.todoapi.dto.UserAdminDto;
 import jvm.pablohdz.todoapi.dto.UserSignInRequest;
 import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
@@ -22,6 +24,7 @@ import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.jwtoken.JwtProvider;
+import jvm.pablohdz.todoapi.mapper.UserAdminMapper;
 import jvm.pablohdz.todoapi.model.AuthenticationResponse;
 import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
@@ -35,6 +38,7 @@ public class UserAdminServiceImpl implements UserAdminService
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final UserAdminMapper mapper;
 
     @Autowired
     public UserAdminServiceImpl(
@@ -43,7 +47,8 @@ public class UserAdminServiceImpl implements UserAdminService
             PasswordEncoder passwordEncoder,
             RoleRepository roleRepository,
             AuthenticationManager authenticationManager,
-            JwtProvider jwtProvider
+            JwtProvider jwtProvider,
+            UserAdminMapper mapper
     )
     {
         this.userRepository = repository;
@@ -52,6 +57,7 @@ public class UserAdminServiceImpl implements UserAdminService
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
+        this.mapper = mapper;
     }
 
     @Override
@@ -98,6 +104,21 @@ public class UserAdminServiceImpl implements UserAdminService
 
         return AuthenticationResponse.withApiKey(
                 token, authenticationToken.getName(), expiresAt, apiKey);
+    }
+
+    @Override
+    public UserAdminDto verifyAccount()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User principal = (User) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        UserAdmin userAdmin = userRepository.findByUsername(username)
+                .orElseThrow(() -> new DataNotFoundException("The user with the username: " +
+                        username + " is not exists, please check credentials"));
+
+        return mapper.userAdminToDto(userAdmin);
     }
 
     private void verifyPasswordsIsEquals(String currentPassword, String password)

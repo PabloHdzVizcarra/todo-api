@@ -9,12 +9,16 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.Instant;
 import java.util.Date;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+
+import static io.jsonwebtoken.Jwts.parserBuilder;
 
 @Component
 public class JwtProviderImpl implements JwtProvider
@@ -80,5 +84,34 @@ public class JwtProviderImpl implements JwtProvider
     public String generateTokenWithEmail(String email)
     {
         return null;
+    }
+
+    @Override
+    public boolean validateToken(String jwt)
+    {
+        parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(jwt);
+        return true;
+    }
+
+    @Override
+    public String getUsernameFromJwt(String jwt)
+    {
+        Claims claims = parserBuilder()
+                .setSigningKey(getPublicKey())
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
+        return claims.getSubject();
+    }
+
+    public PublicKey getPublicKey()
+    {
+        try
+        {
+            return keyStore.getCertificate("todoapi").getPublicKey();
+        } catch (KeyStoreException e)
+        {
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 }

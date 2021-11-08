@@ -1,7 +1,5 @@
 package jvm.pablohdz.todoapi.jwtoken;
 
-import org.springframework.security.core.Authentication;
-
 public interface JwtProvider
 {
     String generateToken(String username);
@@ -9,4 +7,14 @@ public interface JwtProvider
     Long getExpirationMillis();
 
     String generateTokenWithEmail(String email);
+
+    boolean validateToken(String jwt);
+
+    /**
+     * Get the subject signed of the jsonwebtoken
+     *
+     * @param jwt A valid JsonWebToken
+     * @return The subject assign in the jwt token
+     */
+    String getUsernameFromJwt(String jwt);
 }

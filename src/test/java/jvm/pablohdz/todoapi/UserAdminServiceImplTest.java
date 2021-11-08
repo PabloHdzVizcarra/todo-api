@@ -15,6 +15,7 @@ import jvm.pablohdz.todoapi.components.ValidatorRequest;
 import jvm.pablohdz.todoapi.dto.UserSignInRequest;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.jwtoken.JwtProvider;
+import jvm.pablohdz.todoapi.mapper.UserAdminMapper;
 import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.service.UserAdminServiceImpl;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
@@ -44,6 +45,8 @@ class UserAdminServiceImplTest
     private AuthenticationManager authenticationManager;
     @Mock
     private JwtProvider jwtProvider;
+    @Mock
+    private UserAdminMapper mapper;
 
     @BeforeEach
     void setUp()
@@ -51,7 +54,8 @@ class UserAdminServiceImplTest
         underTest = new UserAdminServiceImpl(repository, validatorRequest, passwordEncoder,
                 roleRepository,
                 authenticationManager,
-                jwtProvider
+                jwtProvider,
+                mapper
         );
     }
 
