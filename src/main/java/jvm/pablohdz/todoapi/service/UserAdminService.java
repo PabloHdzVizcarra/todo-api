@@ -1,5 +1,6 @@
 package jvm.pablohdz.todoapi.service;
 
+import jvm.pablohdz.todoapi.dto.UserAdminDto;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 import jvm.pablohdz.todoapi.dto.UserSignInRequest;
 import jvm.pablohdz.todoapi.model.AuthenticationResponse;
@@ -14,8 +15,10 @@ public interface UserAdminService
 
     /**
      * SignIn user
+     *
      * @param dataRequest A DTO object with data
-     * @return
      */
     AuthenticationResponse signIn(UserSignInRequest dataRequest);
+
+    UserAdminDto verifyAccount();
 }
