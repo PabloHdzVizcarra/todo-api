@@ -48,4 +48,17 @@ class JwtProviderImplTest
 
         assertThat(isValidToken).isTrue();
     }
+
+    @Test
+    void givenValidToken_whenGetUsernameFromJwt_thenReturnUsername()
+    {
+        given(passwordStorage.getJwtExpirationTimeInMillis())
+                .willReturn(Instant.now().plusMillis(100000).toEpochMilli());
+        String expectedUsername = "JavaCreator";
+        String token = underTest.generateToken(expectedUsername);
+
+        String actualUsername = underTest.getUsernameFromJwt(token);
+
+        assertThat(actualUsername).isEqualTo(expectedUsername);
+    }
 }

@@ -15,6 +15,7 @@ import java.security.cert.CertificateException;
 import java.time.Instant;
 import java.util.Date;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import static io.jsonwebtoken.Jwts.parserBuilder;
@@ -90,6 +91,17 @@ public class JwtProviderImpl implements JwtProvider
     {
         parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(jwt);
         return true;
+    }
+
+    @Override
+    public String getUsernameFromJwt(String jwt)
+    {
+        Claims claims = parserBuilder()
+                .setSigningKey(getPublicKey())
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
+        return claims.getSubject();
     }
 
     public PublicKey getPublicKey()
