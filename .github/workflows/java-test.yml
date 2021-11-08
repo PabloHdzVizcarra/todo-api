@@ -19,4 +19,4 @@ jobs:
           distribution: 'adopt'
 
       - name: Test with Maven
-        run: mvn verify
+        run: mvn clean verify -DskipTests
