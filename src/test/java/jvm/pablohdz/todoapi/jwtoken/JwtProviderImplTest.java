@@ -6,13 +6,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class JwtProviderImplTest
 {
-    private JwtProvider jwtProvider;
+    private JwtProvider underTest;
     @Mock
     private PasswordStorage passwordStorage;
 
@@ -21,18 +24,28 @@ class JwtProviderImplTest
     {
         given(passwordStorage.getPasswordKeyStore())
                 .willReturn("todo-best-api");
-        jwtProvider = new JwtProviderImpl(passwordStorage);
+        underTest = new JwtProviderImpl(passwordStorage);
     }
 
     @Test
     void givenCorrectUsername_whenCreateToken()
     {
-
-
-        String token = jwtProvider.generateToken("James");
+        String token = underTest.generateToken("James");
 
         assertThat(token)
                 .withFailMessage("The token cannot be empty")
                 .isNotNull();
+    }
+
+    @Test
+    void givenValidToken_whenValidateToken()
+    {
+        given(passwordStorage.getJwtExpirationTimeInMillis())
+                .willReturn(Instant.now().plusMillis(100000).toEpochMilli());
+        String token = underTest.generateToken("James");
+
+        boolean isValidToken = underTest.validateToken(token);
+
+        assertThat(isValidToken).isTrue();
     }
 }
