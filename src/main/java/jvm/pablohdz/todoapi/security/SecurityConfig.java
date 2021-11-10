@@ -19,6 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    public static final String KEY_APIKEY_PARAM = "apiKey";
 
     @Autowired
     public SecurityConfig(

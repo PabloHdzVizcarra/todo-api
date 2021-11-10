@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ public class RoleUser
     @Enumerated(EnumType.STRING)
     private Role name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Collection<UserAdmin> users;
 
     public RoleUser()
