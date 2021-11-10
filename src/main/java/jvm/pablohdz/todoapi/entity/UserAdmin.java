@@ -6,13 +6,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -51,7 +48,7 @@ public class UserAdmin
     private String email;
 
     @Column(name = "user_admin_api_key", nullable = false, unique = true)
-    private UUID apiKey;
+    private String apiKey;
     @Column(name = "user_admin_created_at", nullable = false)
     private Timestamp createdAt;
 
@@ -119,7 +116,7 @@ public class UserAdmin
 
     private void setupApiKey()
     {
-        this.apiKey = UUID.randomUUID();
+        this.apiKey = UUID.randomUUID().toString();
     }
 
     public UUID getId()
@@ -172,12 +169,12 @@ public class UserAdmin
         this.email = email;
     }
 
-    public UUID getApiKey()
+    public String getApiKey()
     {
         return apiKey;
     }
 
-    public void setApiKey(UUID apiKey)
+    public void setApiKey(String apiKey)
     {
         this.apiKey = apiKey;
     }

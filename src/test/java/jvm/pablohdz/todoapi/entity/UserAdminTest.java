@@ -3,7 +3,6 @@ package jvm.pablohdz.todoapi.entity;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -15,7 +14,7 @@ class UserAdminTest
         UserAdmin userAdmin = new UserAdmin("envy", "admin123", "shine", "c8PSWRwR", "test@email" +
                 ".com");
 
-        UUID actualApiKey = userAdmin.getApiKey();
+        String actualApiKey = userAdmin.getApiKey();
         Timestamp actualCreatedAt = userAdmin.getCreatedAt();
 
         assertThat(actualApiKey)

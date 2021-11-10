@@ -8,7 +8,7 @@ public class UserAdminDto
     private String lastname;
     private String username;
     private String email;
-    private UUID apiKey;
+    private String apiKey;
 
 
     public UserAdminDto()
@@ -55,12 +55,12 @@ public class UserAdminDto
         this.email = email;
     }
 
-    public UUID getApiKey()
+    public String getApiKey()
     {
         return apiKey;
     }
 
-    public void setApiKey(UUID apiKey)
+    public void setApiKey(String apiKey)
     {
         this.apiKey = apiKey;
     }
