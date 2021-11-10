@@ -11,7 +11,7 @@ import java.util.UUID;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 
 @Repository
-public interface UserAdminRepository extends JpaRepository<UserAdmin, UUID>
+public interface UserAdminRepository extends JpaRepository<UserAdmin, Long>
 {
 
     @Query(value = "SELECT * FROM user_admin u WHERE u.user_admin_email = :email",
