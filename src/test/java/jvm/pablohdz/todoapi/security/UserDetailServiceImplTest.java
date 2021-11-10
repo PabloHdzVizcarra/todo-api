@@ -6,12 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
@@ -50,6 +54,25 @@ class UserDetailServiceImplTest
                 .isEqualTo("javaMaster");
         assertThat(userDetails.getAuthorities().isEmpty())
                 .isFalse();
+    }
+
+    @Test
+    void givenApiKey_whenLoadByApiKey_thenUserWithFullData()
+    {
+        given(userAdminRepository.findByApiKey(anyString()))
+                .willReturn(Optional.of(createFullUser()));
+
+        UserDetails userDetails = underTest.loadByApiKey("some-key");
+        Collection<? extends GrantedAuthority> authorities =
+                userDetails.getAuthorities();
+        List<GrantedAuthority> list =
+                new ArrayList<>(authorities);
+
+        assertThat(userDetails.getUsername())
+                .isEqualTo("javaMaster");
+        assertThat(list.get(0).getAuthority())
+                .isNotNull()
+                .isEqualTo("ROLE_ADMIN");
     }
 
     @NotNull

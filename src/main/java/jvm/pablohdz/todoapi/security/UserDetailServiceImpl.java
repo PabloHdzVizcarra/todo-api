@@ -82,14 +82,9 @@ public class UserDetailServiceImpl implements UserDetailsService
             return createUserDetailsEmptyValues();
 
         UserAdmin userAdmin = foundUser.get();
-        Collection<RoleUser> roles = userAdmin.getRoles();
+        List<SimpleGrantedAuthority> authorities = createAuthorities(userAdmin);
 
-        List<SimpleGrantedAuthority> roleList = roles.stream()
-                .map(roleU -> roleU.getName().toString())
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toUnmodifiableList());
-
-        return createUserSecurityWithData(userAdmin, roleList);
+        return createUserSecurityWithData(userAdmin, authorities);
     }
 
     @NotNull
