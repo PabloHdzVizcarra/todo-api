@@ -1,64 +1,104 @@
 package jvm.pablohdz.todoapi.security;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
-import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
 @Configuration
 public class UserDetailServiceImpl implements UserDetailsService
 {
     private final UserAdminRepository userAdminRepository;
-    private final RoleRepository roleRepository;
 
     @Autowired
     public UserDetailServiceImpl(
-            UserAdminRepository userAdminRepository,
-            RoleRepository roleRepository
-    )
+            UserAdminRepository userAdminRepository
+            )
     {
         this.userAdminRepository = userAdminRepository;
-        this.roleRepository = roleRepository;
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         Optional<UserAdmin> userFound = userAdminRepository.findByUsername(username);
         if (userFound.isEmpty())
-            return new org.springframework.security.core.userdetails.User(
-                    "", "", true, true,
-                    true, true,
-                    getAuthorities(roleRepository.findByName(Role.ROLE_USER))
-            );
+            return createUserDetailsEmptyValues();
 
         UserAdmin userAdmin = userFound.get();
-        return new org.springframework.security.core.userdetails.User(
+        List<SimpleGrantedAuthority> roleList = createAuthorities(userAdmin);
+
+        return createUserSecurityWithData(userAdmin, roleList);
+    }
+
+    @NotNull
+    private User createUserSecurityWithData(
+            UserAdmin userAdmin,
+            List<SimpleGrantedAuthority> roleList
+    )
+    {
+        return new User(
                 userAdmin.getUsername(),
                 userAdmin.getPassword(),
                 true,
                 true,
                 true,
                 true,
-                getAuthorities(roleRepository.findByName(Role.ROLE_USER))
+                roleList
         );
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(RoleUser role)
+    @NotNull
+    private List<SimpleGrantedAuthority> createAuthorities(UserAdmin user)
     {
-        return Collections.singletonList(new SimpleGrantedAuthority(role.getName().toString()));
+        Collection<RoleUser> roles = user.getRoles();
+        return roles.stream()
+                .map(roleU -> roleU.getName().toString())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Transactional
+    public UserDetails loadByApiKey(String apiKey)
+    {
+        Optional<UserAdmin> foundUser = userAdminRepository.findByApiKey(apiKey);
+        if (foundUser.isEmpty())
+            return createUserDetailsEmptyValues();
+
+        UserAdmin userAdmin = foundUser.get();
+        Collection<RoleUser> roles = userAdmin.getRoles();
+
+        List<SimpleGrantedAuthority> roleList = roles.stream()
+                .map(roleU -> roleU.getName().toString())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toUnmodifiableList());
+
+        return createUserSecurityWithData(userAdmin, roleList);
+    }
+
+    @NotNull
+    private User createUserDetailsEmptyValues()
+    {
+        return new User(
+                "", "", true, true,
+                true, true,
+                new ArrayList<>()
+        );
     }
 }
