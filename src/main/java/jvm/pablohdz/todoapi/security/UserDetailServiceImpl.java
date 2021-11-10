@@ -28,7 +28,7 @@ public class UserDetailServiceImpl implements UserDetailsService
     @Autowired
     public UserDetailServiceImpl(
             UserAdminRepository userAdminRepository
-            )
+    )
     {
         this.userAdminRepository = userAdminRepository;
     }

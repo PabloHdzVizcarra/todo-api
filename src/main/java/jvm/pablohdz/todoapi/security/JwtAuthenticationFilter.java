@@ -63,6 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
         } else if (StringUtils.hasText(apiKeyParameterValue))
         {
             UserDetails userDetails = userDetailService.loadByApiKey(apiKeyParameterValue);
+
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null,
                             userDetails.getAuthorities()
@@ -78,9 +79,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
                             null, null, null));
         }
 
-
         filterChain.doFilter(request, response);
     }
+
 
     private String getApiKeyParameterValue(@NotNull HttpServletRequest request)
     {

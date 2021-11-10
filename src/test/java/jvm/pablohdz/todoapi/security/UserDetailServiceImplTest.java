@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.ApiKeyNotFoundException;
 import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
