@@ -118,6 +118,12 @@
             <version>3.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>0.10.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
