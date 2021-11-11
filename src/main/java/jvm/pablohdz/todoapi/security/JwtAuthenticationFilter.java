@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import jvm.pablohdz.todoapi.jwtoken.JwtProvider;
 
+import static jvm.pablohdz.todoapi.security.SecurityConfig.KEY_APIKEY_PARAM;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter
 {
@@ -37,10 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 
     @Override
     protected void doFilterInternal(
-            @NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull FilterChain filterChain
     ) throws ServletException, IOException
     {
         String jwtToken = getJwtFromRequest(request);
+        String apiKeyParameterValue = getApiKeyParameterValue(request);
+
         if (isValidToken(jwtToken))
         {
             String username = jwtProvider.getUsernameFromJwt(jwtToken);
@@ -54,6 +60,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
                     .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else if (StringUtils.hasText(apiKeyParameterValue))
+        {
+            UserDetails userDetails = userDetailService.loadByApiKey(apiKeyParameterValue);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null,
+                            userDetails.getAuthorities()
+                    );
+
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } else
         {
             SecurityContextHolder
@@ -62,8 +79,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
                             null, null, null));
         }
 
-
         filterChain.doFilter(request, response);
+    }
+
+
+    private String getApiKeyParameterValue(@NotNull HttpServletRequest request)
+    {
+        return request.getParameter(KEY_APIKEY_PARAM);
     }
 
     private boolean isValidToken(String jwtToken)

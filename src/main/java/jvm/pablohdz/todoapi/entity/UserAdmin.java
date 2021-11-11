@@ -6,14 +6,13 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -26,13 +25,9 @@ import javax.validation.constraints.Email;
 public class UserAdmin
 {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_admin_id", updatable = false, nullable = false, unique = true)
-    private UUID id;
+    private Long id;
 
     @Column(name = "user_admin_name", nullable = false)
     private String name;
@@ -51,11 +46,11 @@ public class UserAdmin
     private String email;
 
     @Column(name = "user_admin_api_key", nullable = false, unique = true)
-    private UUID apiKey;
+    private String apiKey;
     @Column(name = "user_admin_created_at", nullable = false)
     private Timestamp createdAt;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
@@ -119,17 +114,7 @@ public class UserAdmin
 
     private void setupApiKey()
     {
-        this.apiKey = UUID.randomUUID();
-    }
-
-    public UUID getId()
-    {
-        return id;
-    }
-
-    public void setId(UUID id)
-    {
-        this.id = id;
+        this.apiKey = UUID.randomUUID().toString();
     }
 
     public String getName()
@@ -172,12 +157,12 @@ public class UserAdmin
         this.email = email;
     }
 
-    public UUID getApiKey()
+    public String getApiKey()
     {
         return apiKey;
     }
 
-    public void setApiKey(UUID apiKey)
+    public void setApiKey(String apiKey)
     {
         this.apiKey = apiKey;
     }
@@ -202,6 +187,7 @@ public class UserAdmin
         this.password = password;
     }
 
+    @ManyToMany(fetch = FetchType.LAZY)
     public Collection<RoleUser> getRoles()
     {
         return roles;

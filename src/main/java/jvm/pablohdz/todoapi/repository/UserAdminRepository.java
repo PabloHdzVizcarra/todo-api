@@ -11,7 +11,7 @@ import java.util.UUID;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 
 @Repository
-public interface UserAdminRepository extends JpaRepository<UserAdmin, UUID>
+public interface UserAdminRepository extends JpaRepository<UserAdmin, Long>
 {
 
     @Query(value = "SELECT * FROM user_admin u WHERE u.user_admin_email = :email",
@@ -21,4 +21,8 @@ public interface UserAdminRepository extends JpaRepository<UserAdmin, UUID>
     @Query(nativeQuery = true,
             value = "SELECT * FROM user_admin u WHERE u.user_admin_username = :username")
     Optional<UserAdmin> findByUsername(@Param("username") String username);
+
+    @Query(nativeQuery = true,
+    value = "SELECT  * FROM user_admin u WHERE u.user_admin_api_key = :apiKey")
+    Optional<UserAdmin> findByApiKey(@Param("apiKey") String apiKey);
 }

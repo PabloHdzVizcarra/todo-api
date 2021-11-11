@@ -8,7 +8,7 @@ public class AuthenticationResponse
     private String authenticationToken;
     private String username;
     private Instant expiresAt;
-    private UUID apiKey;
+    private String apiKey;
 
     public AuthenticationResponse()
     {
@@ -21,7 +21,7 @@ public class AuthenticationResponse
         this.expiresAt = expiresAt;
     }
 
-    public AuthenticationResponse(String token, String username, Instant expiresAt, UUID apiKey)
+    public AuthenticationResponse(String token, String username, Instant expiresAt, String apiKey)
     {
         this.authenticationToken = token;
         this.username = username;
@@ -36,7 +36,7 @@ public class AuthenticationResponse
 
     public static AuthenticationResponse withApiKey(
             String token, String username,
-            Instant expiresAt, UUID apiKey
+            Instant expiresAt, String apiKey
     )
     {
         return new AuthenticationResponse(token, username, expiresAt, apiKey);
@@ -57,7 +57,7 @@ public class AuthenticationResponse
         return expiresAt;
     }
 
-    public UUID getApiKey()
+    public String getApiKey()
     {
         return apiKey;
     }

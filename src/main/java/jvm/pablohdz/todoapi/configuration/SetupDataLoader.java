@@ -61,7 +61,6 @@ public class SetupDataLoader implements
                 "javaHibernate", "java@champion.com"
         );
 
-
         normalUser.setRoles(List.of(userRole));
         masterUser.setRoles(List.of(masterRole));
         userAdminRepository.save(masterUser);

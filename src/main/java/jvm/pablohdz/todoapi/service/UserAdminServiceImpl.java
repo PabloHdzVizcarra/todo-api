@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import jvm.pablohdz.todoapi.components.ValidatorRequest;
 import jvm.pablohdz.todoapi.dto.UserAdminDto;
@@ -91,7 +90,7 @@ public class UserAdminServiceImpl implements UserAdminService
         String password = dataRequest.getPassword();
         checkRequestDataUserSignIn(dataRequest);
         UserAdmin userRegistered = userIsRegistered(username);
-        UUID apiKey = userRegistered.getApiKey();
+        String apiKey = userRegistered.getApiKey();
 
         verifyPasswordsIsEquals(password, userRegistered.getPassword());
 
