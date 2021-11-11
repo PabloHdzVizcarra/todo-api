@@ -1,14 +1,10 @@
 package jvm.pablohdz.todoapi.service;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import io.vavr.collection.Seq;
-import io.vavr.control.Validation;
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.entity.Todo;
@@ -22,7 +18,7 @@ import jvm.pablohdz.todoapi.validator.TodoValidator;
 @Service
 public class TodoServiceImpl implements TodoService
 {
-    private final TodoValidator todoValidator;
+    private final TodoValidator todoValidatorImpl;
     private final UserAdminRepository userAdminRepository;
     private final TodoRepository todoRepository;
     private final TodoMapper todoMapper;
@@ -30,14 +26,14 @@ public class TodoServiceImpl implements TodoService
 
     @Autowired
     public TodoServiceImpl(
-            TodoValidator todoValidator,
+            TodoValidator todoValidatorImpl,
             UserAdminRepository userAdminRepository,
             TodoRepository todoRepository,
             TodoMapper todoMapper,
             UtilsSecurityContext utilsSecurityContext
     )
     {
-        this.todoValidator = todoValidator;
+        this.todoValidatorImpl = todoValidatorImpl;
         this.userAdminRepository = userAdminRepository;
         this.todoRepository = todoRepository;
         this.todoMapper = todoMapper;
@@ -48,29 +44,39 @@ public class TodoServiceImpl implements TodoService
     public TodoDto createTodo(TodoRequest request)
     {
         String username = utilsSecurityContext.getCurrentUsername();
+        TodoRequest validatedRequest = validateDataRequest(request);
+        UserAdmin currentUser = isRegisteredUser(username);
 
-        Validation<Seq<String>, TodoRequest> validateTodo =
-                todoValidator.validateTodo(request.getName(), request.getCategory());
+        Todo todo = createTodo(validatedRequest, currentUser);
+        Todo todoSaved = todoRepository.save(todo);
+        return todoMapper.todoToTodoDto(todoSaved);
+    }
 
-        if (validateTodo.isInvalid())
-        {
-            Seq<String> error = validateTodo.getError();
-
-            String errorData = error.intersperse(", ")
-                    .fold("", String::concat);
-        }
-
-        UserAdmin currentUser = userAdminRepository.findByUsername(username)
+    private UserAdmin isRegisteredUser(String username)
+    {
+        return userAdminRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("The username with value: " +
                         username + " is not exists, please check the username"));
+    }
 
+    @NotNull
+    private Todo createTodo(TodoRequest validatedRequest, UserAdmin currentUser)
+    {
         Todo todo = new Todo();
-        todo.setName(request.getName());
-        todo.setCategory(request.getCategory());
+        todo.setName(validatedRequest.getName());
+        todo.setCategory(validatedRequest.getCategory());
         todo.setUser(currentUser);
+        return todo;
+    }
 
-        Todo todoSaved = todoRepository.save(todo);
-
-        return todoMapper.todoToTodoDto(todoSaved);
+    private TodoRequest validateDataRequest(TodoRequest request)
+    {
+        try
+        {
+            return todoValidatorImpl.validateTodo(request);
+        } catch (Exception e)
+        {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }

@@ -21,8 +21,10 @@ import jvm.pablohdz.todoapi.repository.TodoRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 import jvm.pablohdz.todoapi.security.UtilsSecurityContext;
 import jvm.pablohdz.todoapi.validator.TodoValidator;
+import jvm.pablohdz.todoapi.validator.TodoValidatorImpl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -32,7 +34,7 @@ class TodoServiceImplTest
 {
     private TodoService underTest;
     @Mock
-    private TodoValidator todoValidator;
+    private TodoValidator todoValidatorImpl;
     @Mock
     private UserAdminRepository userAdminRepository;
     @Mock
@@ -45,14 +47,14 @@ class TodoServiceImplTest
     @BeforeEach
     void setUp()
     {
-        underTest = new TodoServiceImpl(todoValidator, userAdminRepository, todoRepository,
+        underTest = new TodoServiceImpl(todoValidatorImpl, userAdminRepository, todoRepository,
                 todoMapper,
                 utilsSecurityContext
         );
     }
 
     @Test
-    void givenValidTodoRequest_whenCreateTodo_thenCreateTodoDto()
+    void givenValidTodoRequest_whenCreateTodo_thenCreateTodoDto() throws Exception
     {
         TodoRequest request = new TodoRequest(
                 "create docs for api project", "docs");
@@ -61,8 +63,8 @@ class TodoServiceImplTest
 
         given(utilsSecurityContext.getCurrentUsername())
                 .willReturn("james");
-        given(todoValidator.validateTodo(anyString(), anyString()))
-                .willReturn(createValidation());
+        given(todoValidatorImpl.validateTodo(request))
+                .willReturn(request);
         given(userAdminRepository.findByUsername("james"))
                 .willReturn(Optional.of(new UserAdmin()));
         given(todoRepository.save(any()))
@@ -82,10 +84,24 @@ class TodoServiceImplTest
                 .isInstanceOf(Date.class);
     }
 
-    @NotNull
-    private Validation<Seq<String>, TodoRequest> createValidation()
+    @Test
+    void given_WrongTodoRequest_whenCreateTodo_thenThrownException() throws Exception
     {
-        return new Validation<Seq<String>, TodoRequest>()
+        TodoRequest request = new TodoRequest(
+                "create docs for api project", "docs");
+        given(utilsSecurityContext.getCurrentUsername())
+                .willReturn("james");
+        given(todoValidatorImpl.validateTodo(request))
+                .willThrow(new Exception("data is not valid"));
+
+        assertThatThrownBy(() -> underTest.createTodo(request))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @NotNull
+    private Validation<Seq<String>, TodoRequest> createValidation(boolean isInvalid)
+    {
+        return new Validation<>()
         {
             @Override
             public boolean isValid()
@@ -96,7 +112,7 @@ class TodoServiceImplTest
             @Override
             public boolean isInvalid()
             {
-                return false;
+                return isInvalid;
             }
 
             @Override
