@@ -1,6 +1,8 @@
 package jvm.pablohdz.todoapi.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class TodoServiceImpl implements TodoService
     private final TodoRepository todoRepository;
     private final TodoMapper todoMapper;
     private final UtilsSecurityContext utilsSecurityContext;
+    private final Logger logger = LoggerFactory.getLogger(TodoServiceImpl.class);
 
     @Autowired
     public TodoServiceImpl(
@@ -54,6 +57,10 @@ public class TodoServiceImpl implements TodoService
 
         Todo todo = createTodo(validatedRequest, currentUser);
         Todo todoSaved = todoRepository.save(todo);
+
+        logger.info("A new todo has been saved with the name: " +
+                todo.getName() + " for the user: " + username);
+
         return todoMapper.todoToTodoDto(todoSaved);
     }
 
@@ -64,6 +71,9 @@ public class TodoServiceImpl implements TodoService
         UserAdmin user = isRegisteredUser(currentUsername);
         List<Todo> todoList = todoRepository.findByApiKey(user.getApiKey());
 
+        logger.info("User: " + currentUsername +
+                " has reviewed all his created TODO with size: " + todoList.size());
+
         return todoList.stream()
                 .map(todoMapper::todoToTodoDto)
                 .collect(Collectors.toUnmodifiableList());
@@ -72,8 +82,12 @@ public class TodoServiceImpl implements TodoService
     @Override
     public void deleteTodoByName(String todoName)
     {
+        String username = utilsSecurityContext.getCurrentUsername();
         Todo todo = todoIsRegistered(todoName);
         Long todoIdRegistered = todo.getId();
+
+        logger.info("The user: " + username + " has deleted the TODO with the name: " +
+                todo.getName());
         todoRepository.deleteById(todoIdRegistered);
     }
 
