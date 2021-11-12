@@ -17,6 +17,7 @@ import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.mapper.TodoMapper;
 import jvm.pablohdz.todoapi.repository.TodoRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
@@ -138,5 +139,16 @@ class TodoServiceImplTest
                 "gosling", "javaMaster",
                 "java@creator.com", new ArrayList<>()
         );
+    }
+
+    @Test
+    void givenWrongNameTodo_whenDeleteTodo_thenThrownException()
+    {
+        given(todoRepository.findByName(anyString()))
+                .willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> underTest.deleteTodoByName("wrong name"))
+                .isInstanceOf(DataNotFoundException.class)
+                .hasMessageContaining("exists");
     }
 }

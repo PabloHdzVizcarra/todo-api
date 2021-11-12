@@ -72,18 +72,24 @@ public class TodoServiceImpl implements TodoService
     @Override
     public void deleteTodoByName(String todoName)
     {
-        Optional<Todo> todoFound = todoRepository.findByName(todoName);
+        Todo todo = todoIsRegistered(todoName);
+        Long todoIdRegistered = todo.getId();
+        todoRepository.deleteById(todoIdRegistered);
+    }
 
+    @NotNull
+    private Todo todoIsRegistered(String todoName)
+    {
+        Optional<Todo> todoFound = todoRepository.findByName(todoName);
         if (todoFound.isEmpty())
             throw new DataNotFoundException("The todo identified by name: " +
                     todoName + " is not exists");
-        Todo todo = todoFound.get();
-
-        todoRepository.deleteById(todo.getId());
+        return todoFound.get();
     }
 
     private UserAdmin isRegisteredUser(String username)
     {
+
         return userAdminRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("The username with value: " +
                         username + " is not exists, please check the username"));
