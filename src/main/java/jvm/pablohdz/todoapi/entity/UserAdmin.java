@@ -1,7 +1,5 @@
 package jvm.pablohdz.todoapi.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -20,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "user_admin")
@@ -30,6 +29,7 @@ public class UserAdmin implements Serializable
     @Column(name = "user_admin_id", updatable = false, nullable = false, unique = true)
     private Long id;
 
+    @NotNull
     @Column(name = "user_admin_name", nullable = false)
     private String name;
 
@@ -171,11 +171,6 @@ public class UserAdmin implements Serializable
     public Timestamp getCreatedAt()
     {
         return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt)
-    {
-        this.createdAt = createdAt;
     }
 
     public String getPassword()

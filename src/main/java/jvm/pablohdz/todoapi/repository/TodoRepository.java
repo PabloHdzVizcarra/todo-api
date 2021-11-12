@@ -5,16 +5,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.List;
 
 import jvm.pablohdz.todoapi.entity.Todo;
 
 @Repository
 public interface TodoRepository extends JpaRepository<Todo, Long>
 {
-    @Query(
-            nativeQuery = true,
-            value = "SELECT * FROM todo t WHERE t.user_api_key =: apikey"
-    )
-    Collection<Todo> findByApiKey(@Param("apikey") String apikey);
+    /**
+     * Find all todos with match by apikey
+     *
+     * @param apikey the user apikey
+     * @return  a list with all found todos
+     */
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM todo WHERE user_api_key = :apikey")
+    List<Todo> findByApiKey(@Param("apikey") String apikey);
 }
