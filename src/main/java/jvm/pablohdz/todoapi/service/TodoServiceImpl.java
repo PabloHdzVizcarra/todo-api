@@ -72,14 +72,14 @@ public class TodoServiceImpl implements TodoService
     @Override
     public void deleteTodoByName(String todoName)
     {
-        String nameFormatted = todoName.replace("-", "");
-        Optional<Todo> todoFound = todoRepository.findByName(nameFormatted);
+        Optional<Todo> todoFound = todoRepository.findByName(todoName);
 
         if (todoFound.isEmpty())
             throw new DataNotFoundException("The todo identified by name: " +
                     todoName + " is not exists");
+        Todo todo = todoFound.get();
 
-        todoRepository.deleteByName(nameFormatted);
+        todoRepository.deleteById(todo.getId());
     }
 
     private UserAdmin isRegisteredUser(String username)
