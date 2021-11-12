@@ -14,5 +14,4 @@ public class TodoApiApplication
     {
         SpringApplication.run(TodoApiApplication.class, args);
     }
-
 }

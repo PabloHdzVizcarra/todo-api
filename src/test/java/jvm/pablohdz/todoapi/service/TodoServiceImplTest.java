@@ -1,17 +1,17 @@
 package jvm.pablohdz.todoapi.service;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
-import io.vavr.collection.Seq;
-import io.vavr.control.Validation;
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.entity.Todo;
@@ -21,7 +21,6 @@ import jvm.pablohdz.todoapi.repository.TodoRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 import jvm.pablohdz.todoapi.security.UtilsSecurityContext;
 import jvm.pablohdz.todoapi.validator.TodoValidator;
-import jvm.pablohdz.todoapi.validator.TodoValidatorImpl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -85,7 +84,7 @@ class TodoServiceImplTest
     }
 
     @Test
-    void given_WrongTodoRequest_whenCreateTodo_thenThrownException() throws Exception
+    void givenWrongTodoRequest_whenCreateTodo_thenThrownException() throws Exception
     {
         TodoRequest request = new TodoRequest(
                 "create docs for api project", "docs");
@@ -98,40 +97,27 @@ class TodoServiceImplTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @NotNull
-    private Validation<Seq<String>, TodoRequest> createValidation(boolean isInvalid)
+    @Test
+    void givenApiKey_whenFetchAllTodoByApiKey_thenListTodo()
     {
-        return new Validation<>()
-        {
-            @Override
-            public boolean isValid()
-            {
-                return false;
-            }
+        TodoDto dto = new TodoDto(
+                "fix save bug", false, new Date(), new Date(), "code");
+        given(utilsSecurityContext.getCurrentUsername())
+                .willReturn("james");
+        given(userAdminRepository.findByUsername("james"))
+                .willReturn(Optional.of(new UserAdmin("james", "admin123",
+                        "gosling", "javaMaster",
+                        "java@creator.com", new ArrayList<>()
+                )));
+        given(todoRepository.findByApiKey(anyString()))
+                .willReturn(List.of(new Todo("clean clothes", "house")));
+        given(todoMapper.todoToTodoDto(any()))
+                .willReturn(dto);
+        List<TodoDto> todos = underTest.fetchTodosByApiKey();
 
-            @Override
-            public boolean isInvalid()
-            {
-                return isInvalid;
-            }
-
-            @Override
-            public TodoRequest get()
-            {
-                return null;
-            }
-
-            @Override
-            public Seq<String> getError()
-            {
-                return null;
-            }
-
-            @Override
-            public String stringPrefix()
-            {
-                return null;
-            }
-        };
+        assertThat(todos)
+                .isInstanceOf(Collection.class);
+        assertThat(todos.size() > 0)
+                .isTrue();
     }
 }

@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.entity.Todo;
@@ -50,6 +53,18 @@ public class TodoServiceImpl implements TodoService
         Todo todo = createTodo(validatedRequest, currentUser);
         Todo todoSaved = todoRepository.save(todo);
         return todoMapper.todoToTodoDto(todoSaved);
+    }
+
+    @Override
+    public List<TodoDto> fetchTodosByApiKey()
+    {
+        String currentUsername = utilsSecurityContext.getCurrentUsername();
+        UserAdmin user = isRegisteredUser(currentUsername);
+        List<Todo> todoList = todoRepository.findByApiKey(user.getApiKey());
+
+        return todoList.stream()
+                .map(todoMapper::todoToTodoDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private UserAdmin isRegisteredUser(String username)

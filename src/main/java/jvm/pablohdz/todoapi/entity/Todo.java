@@ -1,5 +1,6 @@
 package jvm.pablohdz.todoapi.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,16 +12,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "todo")
-public class Todo
+public class Todo implements Serializable
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "todo_id")
     private Long id;
 
+    @NotNull
     @Column(name = "todo_name")
     private String name;
 
@@ -33,6 +36,7 @@ public class Todo
     @Column(name = "todo_updated_at")
     private Date updatedAt;
 
+    @NotNull
     @Column(name = "todo_category")
     private String category;
 
@@ -45,6 +49,16 @@ public class Todo
 
     public Todo()
     {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+        this.status = false;
+    }
+
+    public Todo(String name, String category)
+    {
+        this.name = name;
+        this.category = category;
+
         this.createdAt = new Date();
         this.updatedAt = new Date();
         this.status = false;
