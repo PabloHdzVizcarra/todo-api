@@ -2,6 +2,7 @@ package jvm.pablohdz.todoapi.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import javax.validation.constraints.Email;
 
 @Entity
 @Table(name = "user_admin")
-public class UserAdmin
+public class UserAdmin implements Serializable
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
