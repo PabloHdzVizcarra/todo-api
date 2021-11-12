@@ -64,6 +64,11 @@ public class Todo implements Serializable
         this.status = false;
     }
 
+    public Long getId()
+    {
+        return id;
+    }
+
     public String getName()
     {
         return name;

@@ -15,4 +15,11 @@ public interface TodoService
      * @return A list with all found todos
      */
     List<TodoDto> fetchTodosByApiKey();
+
+    /**
+     * Delete the specific TODO selected by name
+     *
+     * @param todoName todo name already registered
+     */
+    void deleteTodoByName(String todoName);
 }

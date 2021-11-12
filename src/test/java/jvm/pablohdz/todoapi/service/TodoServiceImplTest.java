@@ -1,5 +1,6 @@
 package jvm.pablohdz.todoapi.service;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.mapper.TodoMapper;
 import jvm.pablohdz.todoapi.repository.TodoRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
@@ -23,6 +25,7 @@ import jvm.pablohdz.todoapi.security.UtilsSecurityContext;
 import jvm.pablohdz.todoapi.validator.TodoValidator;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -105,10 +108,7 @@ class TodoServiceImplTest
         given(utilsSecurityContext.getCurrentUsername())
                 .willReturn("james");
         given(userAdminRepository.findByUsername("james"))
-                .willReturn(Optional.of(new UserAdmin("james", "admin123",
-                        "gosling", "javaMaster",
-                        "java@creator.com", new ArrayList<>()
-                )));
+                .willReturn(Optional.of(createFullUser()));
         given(todoRepository.findByApiKey(anyString()))
                 .willReturn(List.of(new Todo("clean clothes", "house")));
         given(todoMapper.todoToTodoDto(any()))
@@ -119,5 +119,36 @@ class TodoServiceImplTest
                 .isInstanceOf(Collection.class);
         assertThat(todos.size() > 0)
                 .isTrue();
+    }
+
+    @Test
+    void givenTodoNameAndApiKey_whenDeleteTodo_thenTodoIsDeleted()
+    {
+        Todo todo = new Todo("play soccer", "sports");
+        given(todoRepository.findByName(any()))
+                .willReturn(Optional.of(todo));
+
+        assertThatCode(() -> underTest.deleteTodoByName("play soccer"))
+                .doesNotThrowAnyException();
+    }
+
+    @NotNull
+    private UserAdmin createFullUser()
+    {
+        return new UserAdmin("james", "admin123",
+                "gosling", "javaMaster",
+                "java@creator.com", new ArrayList<>()
+        );
+    }
+
+    @Test
+    void givenWrongNameTodo_whenDeleteTodo_thenThrownException()
+    {
+        given(todoRepository.findByName(anyString()))
+                .willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> underTest.deleteTodoByName("wrong name"))
+                .isInstanceOf(DataNotFoundException.class)
+                .hasMessageContaining("exists");
     }
 }

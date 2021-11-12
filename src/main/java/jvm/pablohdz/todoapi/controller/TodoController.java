@@ -41,4 +41,11 @@ public class TodoController
         List<TodoDto> todoList = todoService.fetchTodosByApiKey();
         return ResponseEntity.ok(todoList);
     }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestBody TodoRequest request)
+    {
+        todoService.deleteTodoByName(request.getName());
+        return ResponseEntity.noContent().build();
+    }
 }
