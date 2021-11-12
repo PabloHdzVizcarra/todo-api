@@ -6,12 +6,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.mapper.TodoMapper;
 import jvm.pablohdz.todoapi.repository.TodoRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
@@ -65,6 +67,19 @@ public class TodoServiceImpl implements TodoService
         return todoList.stream()
                 .map(todoMapper::todoToTodoDto)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public void deleteTodoByName(String todoName)
+    {
+        String nameFormatted = todoName.replace("-", "");
+        Optional<Todo> todoFound = todoRepository.findByName(nameFormatted);
+
+        if (todoFound.isEmpty())
+            throw new DataNotFoundException("The todo identified by name: " +
+                    todoName + " is not exists");
+
+        todoRepository.deleteByName(nameFormatted);
     }
 
     private UserAdmin isRegisteredUser(String username)
