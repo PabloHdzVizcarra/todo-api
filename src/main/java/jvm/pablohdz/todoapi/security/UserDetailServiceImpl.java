@@ -91,8 +91,8 @@ public class UserDetailServiceImpl implements UserDetailsService
     private User createUserDetailsEmptyValues()
     {
         return new User(
-                "", "", true, true,
-                true, true,
+                "anonymous", "", false, true,
+                true, false,
                 new ArrayList<>()
         );
     }
