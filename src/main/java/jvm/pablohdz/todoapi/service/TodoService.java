@@ -4,6 +4,7 @@ import java.util.List;
 
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
+import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 
 public interface TodoService
 {
@@ -22,4 +23,6 @@ public interface TodoService
      * @param todoName todo name already registered
      */
     void deleteTodoByName(String todoName);
+
+    TodoDto updateTodo(TodoRequestWithId request);
 }

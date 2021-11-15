@@ -2,6 +2,7 @@ package jvm.pablohdz.todoapi.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
+import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
@@ -34,9 +36,9 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class TodoServiceImplTest
 {
-    private TodoService underTest;
+    private TodoService todoService;
     @Mock
-    private TodoValidator todoValidatorImpl;
+    private TodoValidator todoValidator;
     @Mock
     private UserAdminRepository userAdminRepository;
     @Mock
@@ -49,7 +51,7 @@ class TodoServiceImplTest
     @BeforeEach
     void setUp()
     {
-        underTest = new TodoServiceImpl(todoValidatorImpl, userAdminRepository, todoRepository,
+        todoService = new TodoServiceImpl(todoValidator, userAdminRepository, todoRepository,
                 todoMapper,
                 utilsSecurityContext
         );
@@ -65,7 +67,7 @@ class TodoServiceImplTest
 
         given(utilsSecurityContext.getCurrentUsername())
                 .willReturn("james");
-        given(todoValidatorImpl.validateTodo(request))
+        given(todoValidator.validateTodo(request))
                 .willReturn(request);
         given(userAdminRepository.findByUsername("james"))
                 .willReturn(Optional.of(new UserAdmin()));
@@ -74,7 +76,7 @@ class TodoServiceImplTest
         given(todoMapper.todoToTodoDto(any()))
                 .willReturn(dto);
 
-        TodoDto todoDto = underTest.createTodo(request);
+        TodoDto todoDto = todoService.createTodo(request);
 
         assertThat(todoDto.getName())
                 .isNotEmpty()
@@ -93,10 +95,10 @@ class TodoServiceImplTest
                 "create docs for api project", "docs");
         given(utilsSecurityContext.getCurrentUsername())
                 .willReturn("james");
-        given(todoValidatorImpl.validateTodo(request))
+        given(todoValidator.validateTodo(request))
                 .willThrow(new Exception("data is not valid"));
 
-        assertThatThrownBy(() -> underTest.createTodo(request))
+        assertThatThrownBy(() -> todoService.createTodo(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -113,7 +115,7 @@ class TodoServiceImplTest
                 .willReturn(List.of(new Todo("clean clothes", "house")));
         given(todoMapper.todoToTodoDto(any()))
                 .willReturn(dto);
-        List<TodoDto> todos = underTest.fetchTodosByApiKey();
+        List<TodoDto> todos = todoService.fetchTodosByApiKey();
 
         assertThat(todos)
                 .isInstanceOf(Collection.class);
@@ -128,7 +130,7 @@ class TodoServiceImplTest
         given(todoRepository.findByName(any()))
                 .willReturn(Optional.of(todo));
 
-        assertThatCode(() -> underTest.deleteTodoByName("play soccer"))
+        assertThatCode(() -> todoService.deleteTodoByName("play soccer"))
                 .doesNotThrowAnyException();
     }
 
@@ -147,8 +149,9 @@ class TodoServiceImplTest
         given(todoRepository.findByName(anyString()))
                 .willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> underTest.deleteTodoByName("wrong name"))
+        assertThatThrownBy(() -> todoService.deleteTodoByName("wrong name"))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("exists");
     }
+
 }

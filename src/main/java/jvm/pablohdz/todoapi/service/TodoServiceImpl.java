@@ -6,13 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
+import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
@@ -25,7 +28,7 @@ import jvm.pablohdz.todoapi.validator.TodoValidator;
 @Service
 public class TodoServiceImpl implements TodoService
 {
-    private final TodoValidator todoValidatorImpl;
+    private final TodoValidator todoValidator;
     private final UserAdminRepository userAdminRepository;
     private final TodoRepository todoRepository;
     private final TodoMapper todoMapper;
@@ -41,7 +44,7 @@ public class TodoServiceImpl implements TodoService
             UtilsSecurityContext utilsSecurityContext
     )
     {
-        this.todoValidatorImpl = todoValidatorImpl;
+        this.todoValidator = todoValidatorImpl;
         this.userAdminRepository = userAdminRepository;
         this.todoRepository = todoRepository;
         this.todoMapper = todoMapper;
@@ -91,6 +94,36 @@ public class TodoServiceImpl implements TodoService
         todoRepository.deleteById(todoIdRegistered);
     }
 
+    @Override
+    @Transactional
+    public TodoDto updateTodo(TodoRequestWithId request)
+    {
+        TodoRequestWithId validTodoRequest = validateRequestToUpdateTodo(request);
+        String nameTodo = validTodoRequest.getName();
+        Todo todoFound = todoRepository
+                .findByName(nameTodo)
+                .orElseThrow(() -> new DataNotFoundException("the todo with name: " +
+                        nameTodo + " is not exists"));
+
+        todoFound.setName(validTodoRequest.getName());
+        todoFound.setCategory(validTodoRequest.getCategory());
+        todoFound.setUpdatedAt(new Date());
+        Todo modifiedTodo = todoRepository.save(todoFound);
+
+        return todoMapper.todoToTodoDto(modifiedTodo);
+    }
+
+    private TodoRequestWithId validateRequestToUpdateTodo(TodoRequestWithId request)
+    {
+        try
+        {
+            return todoValidator.validateTodoWithID(request);
+        } catch (Exception e)
+        {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
     @NotNull
     private Todo todoIsRegistered(String todoName)
     {
@@ -123,7 +156,7 @@ public class TodoServiceImpl implements TodoService
     {
         try
         {
-            return todoValidatorImpl.validateTodo(request);
+            return todoValidator.validateTodo(request);
         } catch (Exception e)
         {
             throw new IllegalArgumentException(e.getMessage());
