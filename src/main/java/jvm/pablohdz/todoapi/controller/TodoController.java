@@ -31,9 +31,9 @@ public class TodoController
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TodoDto> create(@RequestBody TodoRequest request)
+    public ResponseEntity<TodoWithIdDto> create(@RequestBody TodoRequest request)
     {
-        TodoDto dto = todoService.createTodo(request);
+        TodoWithIdDto dto = todoService.createTodo(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(dto);
     }

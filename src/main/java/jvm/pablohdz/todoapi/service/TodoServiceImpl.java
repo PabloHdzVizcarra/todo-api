@@ -53,7 +53,7 @@ public class TodoServiceImpl implements TodoService
     }
 
     @Override
-    public TodoDto createTodo(TodoRequest request)
+    public TodoWithIdDto createTodo(TodoRequest request)
     {
         String username = utilsSecurityContext.getCurrentUsername();
         TodoRequest validatedRequest = validateDataRequest(request);
@@ -65,7 +65,7 @@ public class TodoServiceImpl implements TodoService
         logger.info("A new todo has been saved with the name: " +
                 todo.getName() + " for the user: " + username);
 
-        return todoMapper.todoToTodoDto(todoSaved);
+        return todoMapper.todoToTodoWithIdDto(todoSaved);
     }
 
     @Override
