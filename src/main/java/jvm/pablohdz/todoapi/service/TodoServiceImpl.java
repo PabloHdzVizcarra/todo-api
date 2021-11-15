@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
@@ -96,21 +97,37 @@ public class TodoServiceImpl implements TodoService
 
     @Override
     @Transactional
-    public TodoDto updateTodo(TodoRequestWithId request)
+    public TodoWithIdDto updateTodo(TodoRequestWithId request)
     {
-        TodoRequestWithId validTodoRequest = validateRequestToUpdateTodo(request);
-        String nameTodo = validTodoRequest.getName();
-        Todo todoFound = todoRepository
-                .findByName(nameTodo)
-                .orElseThrow(() -> new DataNotFoundException("the todo with name: " +
-                        nameTodo + " is not exists"));
+        TodoRequestWithId requestValidated = validateRequestToUpdateTodo(request);
+        Long id = requestValidated.getId();
+        Todo todoFound = getTodoByRepository(id);
+        Todo todoUpdated = updateTodoFound(todoFound, requestValidated);
+        Todo todoSaved = todoRepository.save(todoUpdated);
 
-        todoFound.setName(validTodoRequest.getName());
-        todoFound.setCategory(validTodoRequest.getCategory());
+        return todoMapper.todoToTodoWithIdDto(todoSaved);
+    }
+
+    private @NotNull Todo updateTodoFound(@NotNull Todo todoFound, @NotNull TodoRequestWithId data)
+    {
+        String name = data.getName();
+        String category = data.getCategory();
+        todoFound.setName(name);
+        todoFound.setCategory(category);
         todoFound.setUpdatedAt(new Date());
-        Todo modifiedTodo = todoRepository.save(todoFound);
 
-        return todoMapper.todoToTodoDto(modifiedTodo);
+        return todoFound;
+    }
+
+    private @NotNull Todo getTodoByRepository(Long id)
+    {
+        Optional<Todo> optionalTodo = todoRepository.findById(id);
+
+        if (optionalTodo.isEmpty())
+            throw new DataNotFoundException("the todo with the id: " + id +
+                    " is not exists, please check your data sending");
+
+        return optionalTodo.get();
     }
 
     private TodoRequestWithId validateRequestToUpdateTodo(TodoRequestWithId request)
@@ -143,7 +160,7 @@ public class TodoServiceImpl implements TodoService
     }
 
     @NotNull
-    private Todo createTodo(TodoRequest validatedRequest, UserAdmin currentUser)
+    private Todo createTodo(@NotNull TodoRequest validatedRequest, UserAdmin currentUser)
     {
         Todo todo = new Todo();
         todo.setName(validatedRequest.getName());

@@ -5,6 +5,7 @@ import java.util.List;
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 
 public interface TodoService
 {
@@ -18,11 +19,11 @@ public interface TodoService
     List<TodoDto> fetchTodosByApiKey();
 
     /**
-     * Delete the specific TODO selected by name
+     * Delete the specific element selected by name
      *
-     * @param todoName todo name already registered
+     * @param todoName name already registered
      */
     void deleteTodoByName(String todoName);
 
-    TodoDto updateTodo(TodoRequestWithId request);
+    TodoWithIdDto updateTodo(TodoRequestWithId request);
 }

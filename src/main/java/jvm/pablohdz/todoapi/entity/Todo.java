@@ -24,7 +24,7 @@ public class Todo implements Serializable
     private Long id;
 
     @NotNull
-    @Column(name = "todo_name")
+    @Column(name = "todo_name", nullable = false)
     private String name;
 
     @Column(name = "todo_status")
@@ -37,7 +37,7 @@ public class Todo implements Serializable
     private Date updatedAt;
 
     @NotNull
-    @Column(name = "todo_category")
+    @Column(name = "todo_category", nullable = false)
     private String category;
 
     @ManyToOne(fetch = FetchType.LAZY)
