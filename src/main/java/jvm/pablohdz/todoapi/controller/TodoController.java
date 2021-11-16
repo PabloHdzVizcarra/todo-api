@@ -48,7 +48,7 @@ public class TodoController
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTwo(
+    public ResponseEntity<String> delete(
             @PathVariable("id") Long id
     )
     {

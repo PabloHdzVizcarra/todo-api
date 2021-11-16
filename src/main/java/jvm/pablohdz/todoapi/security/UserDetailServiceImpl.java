@@ -1,6 +1,7 @@
 package jvm.pablohdz.todoapi.security;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,6 +48,19 @@ public class UserDetailServiceImpl implements UserDetailsService
         return createUserSecurityWithData(userAdmin, roleList);
     }
 
+    @Transactional
+    public Optional<UserDetails> loadByApiKey(String apiKey)
+    {
+        Optional<UserAdmin> foundUser = userAdminRepository.findByApiKey(apiKey);
+        if (foundUser.isEmpty())
+            return Optional.empty();
+
+        UserAdmin userAdmin = foundUser.get();
+        List<SimpleGrantedAuthority> authorities = createAuthorities(userAdmin);
+
+        return Optional.of(createUserSecurityWithData(userAdmin, authorities));
+    }
+
     @NotNull
     private User createUserSecurityWithData(
             UserAdmin userAdmin,
@@ -74,24 +88,11 @@ public class UserDetailServiceImpl implements UserDetailsService
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    @Transactional
-    public UserDetails loadByApiKey(String apiKey)
-    {
-        Optional<UserAdmin> foundUser = userAdminRepository.findByApiKey(apiKey);
-        if (foundUser.isEmpty())
-            return createUserDetailsEmptyValues();
-
-        UserAdmin userAdmin = foundUser.get();
-        List<SimpleGrantedAuthority> authorities = createAuthorities(userAdmin);
-
-        return createUserSecurityWithData(userAdmin, authorities);
-    }
-
     @NotNull
     private User createUserDetailsEmptyValues()
     {
         return new User(
-                "anonymous", "", false, true,
+                null, "", false, true,
                 true, false,
                 new ArrayList<>()
         );

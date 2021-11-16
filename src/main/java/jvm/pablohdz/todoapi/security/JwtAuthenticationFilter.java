@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -62,21 +63,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else if (StringUtils.hasText(apiKeyParameterValue))
         {
-            UserDetails userDetails = userDetailService.loadByApiKey(apiKeyParameterValue);
+            Optional<UserDetails> optionalUserDetails =
+                    userDetailService.loadByApiKey(apiKeyParameterValue);
+            UsernamePasswordAuthenticationToken authentication = null;
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null,
-                            userDetails.getAuthorities()
-                    );
+            if (optionalUserDetails.isEmpty())
+                authentication = new UsernamePasswordAuthenticationToken(null, null, null);
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (optionalUserDetails.isPresent())
+            {
+                UserDetails userDetails = optionalUserDetails.get();
+                authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null,
+                                userDetails.getAuthorities()
+                        );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            SecurityContextHolder.getContext().setAuthentication(null);
         } else
         {
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(new UsernamePasswordAuthenticationToken(
-                            null, null, null));
+            SecurityContextHolder.getContext().setAuthentication(null);
         }
 
         filterChain.doFilter(request, response);

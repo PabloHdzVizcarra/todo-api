@@ -63,17 +63,22 @@ class UserDetailServiceImplTest
         given(userAdminRepository.findByApiKey(anyString()))
                 .willReturn(Optional.of(createFullUser()));
 
-        UserDetails userDetails = underTest.loadByApiKey("some-key");
-        Collection<? extends GrantedAuthority> authorities =
-                userDetails.getAuthorities();
-        List<GrantedAuthority> list =
-                new ArrayList<>(authorities);
+        Optional<UserDetails> userDetails = underTest.loadByApiKey("some-key");
 
-        assertThat(userDetails.getUsername())
-                .isEqualTo("javaMaster");
-        assertThat(list.get(0).getAuthority())
-                .isNotNull()
-                .isEqualTo("ROLE_ADMIN");
+        if (userDetails.isPresent()) {
+            UserDetails data = userDetails.get();
+            Collection<? extends GrantedAuthority> authorities =
+                    data.getAuthorities();
+            List<GrantedAuthority> list =
+                    new ArrayList<>(authorities);
+
+            assertThat(data.getUsername())
+                    .isEqualTo("javaMaster");
+            assertThat(list.get(0).getAuthority())
+                    .isNotNull()
+                    .isEqualTo("ROLE_ADMIN");
+        }
+
     }
 
     @NotNull
