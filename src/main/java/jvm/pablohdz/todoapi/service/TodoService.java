@@ -2,7 +2,6 @@ package jvm.pablohdz.todoapi.service;
 
 import java.util.List;
 
-import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
@@ -24,7 +23,7 @@ public interface TodoService
      *
      * @return A list with all found todos
      */
-    List<TodoDto> fetchTodosByApiKey();
+    List<TodoWithIdDto> fetchTodosByApiKey();
 
     /**
      * Delete the specific element selected by name

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
@@ -69,7 +68,7 @@ public class TodoServiceImpl implements TodoService
     }
 
     @Override
-    public List<TodoDto> fetchTodosByApiKey()
+    public List<TodoWithIdDto> fetchTodosByApiKey()
     {
         String currentUsername = utilsSecurityContext.getCurrentUsername();
         UserAdmin user = isRegisteredUser(currentUsername);
@@ -79,7 +78,7 @@ public class TodoServiceImpl implements TodoService
                 " has reviewed all his created TODO with size: " + todoList.size());
 
         return todoList.stream()
-                .map(todoMapper::todoToTodoDto)
+                .map(todoMapper::todoToTodoWithIdDto)
                 .collect(Collectors.toUnmodifiableList());
     }
 

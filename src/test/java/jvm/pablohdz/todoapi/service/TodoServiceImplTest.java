@@ -116,7 +116,7 @@ class TodoServiceImplTest
                 .willReturn(List.of(new Todo("clean clothes", "house")));
         given(todoMapper.todoToTodoDto(any()))
                 .willReturn(dto);
-        List<TodoDto> todos = todoService.fetchTodosByApiKey();
+        List<TodoWithIdDto> todos = todoService.fetchTodosByApiKey();
 
         assertThat(todos)
                 .isInstanceOf(Collection.class);
