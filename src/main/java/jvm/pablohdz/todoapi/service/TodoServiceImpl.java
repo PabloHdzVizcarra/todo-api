@@ -18,6 +18,7 @@ import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.DataAlreadyRegistered;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.mapper.TodoMapper;
 import jvm.pablohdz.todoapi.repository.TodoRepository;
@@ -54,8 +55,10 @@ public class TodoServiceImpl implements TodoService
     @Override
     public TodoWithIdDto createTodo(TodoRequest request)
     {
-        String username = utilsSecurityContext.getCurrentUsername();
         TodoRequest validatedRequest = validateDataRequest(request);
+        isAlreadyRegisteredTodo(request);
+
+        String username = utilsSecurityContext.getCurrentUsername();
         UserAdmin currentUser = isRegisteredUser(username);
 
         Todo todo = createTodo(validatedRequest, currentUser);
@@ -65,6 +68,14 @@ public class TodoServiceImpl implements TodoService
                 todo.getName() + " for the user: " + username);
 
         return todoMapper.todoToTodoWithIdDto(todoSaved);
+    }
+
+    private void isAlreadyRegisteredTodo(TodoRequest request)
+    {
+        Optional<Todo> optionalTodo = todoRepository.findByName(request.getName());
+        if (optionalTodo.isPresent())
+            throw new DataAlreadyRegistered("the todo with name: " + request.getName() +
+                    " already registered");
     }
 
     @Override
