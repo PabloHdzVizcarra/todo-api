@@ -53,9 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             String username = jwtProvider.getUsernameFromJwt(jwtToken);
             UserDetails userDetails = userDetailService.loadUserByUsername(username);
             if (userDetails != null)
-                createAuthentication(request, userDetails);
+            {
 
-            SecurityContextHolder.getContext().setAuthentication(null);
+                createAuthentication(request, userDetails);
+            } else
+            {
+
+                SecurityContextHolder.getContext().setAuthentication(null);
+            }
         } else if (StringUtils.hasText(apiKeyParameterValue))
         {
             Optional<UserDetails> optionalUserDetails =

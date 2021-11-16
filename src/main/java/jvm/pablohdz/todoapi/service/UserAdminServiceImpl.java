@@ -27,6 +27,7 @@ import jvm.pablohdz.todoapi.mapper.UserAdminMapper;
 import jvm.pablohdz.todoapi.model.AuthenticationResponse;
 import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
+import jvm.pablohdz.todoapi.security.UtilsSecurityContext;
 
 @Service
 public class UserAdminServiceImpl implements UserAdminService
@@ -38,6 +39,7 @@ public class UserAdminServiceImpl implements UserAdminService
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final UserAdminMapper mapper;
+    private final UtilsSecurityContext utilsSecurityContext;
 
     @Autowired
     public UserAdminServiceImpl(
@@ -47,7 +49,8 @@ public class UserAdminServiceImpl implements UserAdminService
             RoleRepository roleRepository,
             AuthenticationManager authenticationManager,
             JwtProvider jwtProvider,
-            UserAdminMapper mapper
+            UserAdminMapper mapper,
+            UtilsSecurityContext utilsSecurityContext
     )
     {
         this.userRepository = repository;
@@ -57,6 +60,7 @@ public class UserAdminServiceImpl implements UserAdminService
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.mapper = mapper;
+        this.utilsSecurityContext = utilsSecurityContext;
     }
 
     @Override
@@ -108,10 +112,7 @@ public class UserAdminServiceImpl implements UserAdminService
     @Override
     public UserAdminDto verifyAccount()
     {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        User principal = (User) authentication.getPrincipal();
-        String username = principal.getUsername();
+        String username = utilsSecurityContext.getCurrentUsername();
 
         UserAdmin userAdmin = userRepository.findByUsername(username)
                 .orElseThrow(() -> new DataNotFoundException("The user with the username: " +
