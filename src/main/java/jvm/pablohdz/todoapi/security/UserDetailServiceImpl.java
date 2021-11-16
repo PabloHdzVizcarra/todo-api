@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -87,13 +86,4 @@ public class UserDetailServiceImpl implements UserDetailsService
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    @NotNull
-    private User createUserDetailsEmptyValues()
-    {
-        return new User(
-                null, "", false, true,
-                true, false,
-                new ArrayList<>()
-        );
-    }
 }
