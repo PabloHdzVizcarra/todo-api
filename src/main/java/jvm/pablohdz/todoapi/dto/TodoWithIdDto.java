@@ -11,6 +11,27 @@ public class TodoWithIdDto
     private Date updatedAt;
     private String category;
 
+    public TodoWithIdDto()
+    {
+    }
+
+    public TodoWithIdDto(
+            Long id,
+            String name,
+            boolean status,
+            Date createdAt,
+            Date updatedAt,
+            String category
+    )
+    {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.category = category;
+    }
+
     public Long getId()
     {
         return id;

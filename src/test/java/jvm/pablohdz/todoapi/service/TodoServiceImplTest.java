@@ -18,6 +18,7 @@ import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
+import jvm.pablohdz.todoapi.exceptions.DataAlreadyRegistered;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.mapper.TodoMapper;
 import jvm.pablohdz.todoapi.repository.TodoRepository;
@@ -61,8 +62,6 @@ class TodoServiceImplTest
     {
         TodoRequest request = new TodoRequest(
                 "create docs for api project", "docs");
-        TodoDto dto = new TodoDto(
-                "fix save bug", false, new Date(), new Date(), "code");
 
         given(utilsSecurityContext.getCurrentUsername())
                 .willReturn("james");
@@ -71,9 +70,9 @@ class TodoServiceImplTest
         given(userAdminRepository.findByUsername("james"))
                 .willReturn(Optional.of(new UserAdmin()));
         given(todoRepository.save(any()))
-                .willReturn(new Todo());
-        given(todoMapper.todoToTodoDto(any()))
-                .willReturn(dto);
+                .willReturn(createValidTodo());
+        given(todoMapper.todoToTodoWithIdDto(any()))
+                .willReturn(createValidTodoWithIdDto());
 
         TodoWithIdDto todoDto = todoService.createTodo(request);
 
@@ -89,13 +88,18 @@ class TodoServiceImplTest
                 .isInstanceOf(Long.class);
     }
 
+    @NotNull
+    private TodoWithIdDto createValidTodoWithIdDto()
+    {
+        return new TodoWithIdDto(1L, "create new framework", false, new Date(), new Date()
+                , "programming");
+    }
+
     @Test
     void givenWrongTodoRequest_whenCreateTodo_thenThrownException() throws Exception
     {
         TodoRequest request = new TodoRequest(
                 "create docs for api project", "docs");
-        given(utilsSecurityContext.getCurrentUsername())
-                .willReturn("james");
         given(todoValidator.validateTodo(request))
                 .willThrow(new Exception("data is not valid"));
 
@@ -114,8 +118,8 @@ class TodoServiceImplTest
                 .willReturn(Optional.of(createFullUser()));
         given(todoRepository.findByApiKey(anyString()))
                 .willReturn(List.of(new Todo("clean clothes", "house")));
-        given(todoMapper.todoToTodoDto(any()))
-                .willReturn(dto);
+        given(todoMapper.todoToTodoWithIdDto(any()))
+                .willReturn(createValidTodoWithIdDto());
         List<TodoWithIdDto> todos = todoService.fetchTodosByApiKey();
 
         assertThat(todos)
@@ -153,6 +157,35 @@ class TodoServiceImplTest
         assertThatThrownBy(() -> todoService.deleteTodoByName("wrong name"))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("exists");
+    }
+
+    @Test
+    void givenTodoAlreadyRegistered_whenCreate_thenThrownException() throws Exception
+    {
+        given(todoValidator.validateTodo(any()))
+                .willReturn(createValidTodoRequest());
+        given(todoRepository.findByName(anyString()))
+                .willReturn(Optional.of(createValidTodo()));
+
+
+        assertThatThrownBy(() -> todoService.createTodo(createValidTodoRequest()))
+                .hasMessageContaining("already registered")
+                .isInstanceOf(DataAlreadyRegistered.class);
+    }
+
+    @NotNull
+    private Todo createValidTodo()
+    {
+        return new Todo("create a programming language", "programming");
+    }
+
+    @NotNull
+    private TodoRequest createValidTodoRequest()
+    {
+        return new TodoRequest(
+                "create a programming language",
+                "programming"
+        );
     }
 
 }

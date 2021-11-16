@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import jvm.pablohdz.todoapi.exceptions.DataAlreadyRegistered;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
 
@@ -31,6 +32,16 @@ public class UserAdminServiceExceptionHandler extends ResponseEntityExceptionHan
     {
         return handleExceptionInternal(exception, exception.getMessage(),
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request
+        );
+    }
+
+    @ExceptionHandler(value = {DataAlreadyRegistered.class})
+    protected ResponseEntity<?> handleDataAlreadyRegistered(
+            DataAlreadyRegistered exception, WebRequest request
+    )
+    {
+        return handleExceptionInternal(exception, exception.getMessage(),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request
         );
     }
 }
