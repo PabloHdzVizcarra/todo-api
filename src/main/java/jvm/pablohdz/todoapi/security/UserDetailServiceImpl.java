@@ -1,7 +1,6 @@
 package jvm.pablohdz.todoapi.security;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +39,7 @@ public class UserDetailServiceImpl implements UserDetailsService
     {
         Optional<UserAdmin> userFound = userAdminRepository.findByUsername(username);
         if (userFound.isEmpty())
-            return createUserDetailsEmptyValues();
+            return null;
 
         UserAdmin userAdmin = userFound.get();
         List<SimpleGrantedAuthority> roleList = createAuthorities(userAdmin);

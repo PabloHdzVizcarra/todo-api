@@ -7,21 +7,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import jvm.pablohdz.todoapi.entity.Role;
 import jvm.pablohdz.todoapi.entity.RoleUser;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
-import jvm.pablohdz.todoapi.exceptions.ApiKeyNotFoundException;
-import jvm.pablohdz.todoapi.repository.RoleRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

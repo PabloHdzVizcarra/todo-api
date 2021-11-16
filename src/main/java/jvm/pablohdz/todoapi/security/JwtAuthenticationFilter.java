@@ -52,34 +52,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
         {
             String username = jwtProvider.getUsernameFromJwt(jwtToken);
             UserDetails userDetails = userDetailService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null,
-                            userDetails.getAuthorities()
-                    );
+            if (userDetails != null)
+                createAuthentication(request, userDetails);
 
-            authentication
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(null);
         } else if (StringUtils.hasText(apiKeyParameterValue))
         {
             Optional<UserDetails> optionalUserDetails =
                     userDetailService.loadByApiKey(apiKeyParameterValue);
-            UsernamePasswordAuthenticationToken authentication = null;
-
-            if (optionalUserDetails.isEmpty())
-                authentication = new UsernamePasswordAuthenticationToken(null, null, null);
 
             if (optionalUserDetails.isPresent())
             {
                 UserDetails userDetails = optionalUserDetails.get();
-                authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null,
-                                userDetails.getAuthorities()
-                        );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                createAuthentication(request, userDetails);
             }
+
             SecurityContextHolder.getContext().setAuthentication(null);
         } else
         {
@@ -87,6 +74,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void createAuthentication(@NotNull HttpServletRequest request, UserDetails userDetails)
+    {
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null,
+                        userDetails.getAuthorities()
+                );
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
 
