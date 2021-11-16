@@ -28,9 +28,9 @@ public interface TodoService
     /**
      * Delete the specific element selected by name
      *
-     * @param todoName name already registered
+     * @param id name already registered
      */
-    void deleteTodoByName(String todoName);
+    void deleteElement(Long id);
 
     TodoWithIdDto updateTodo(TodoRequestWithId request);
 }

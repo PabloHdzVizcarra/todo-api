@@ -129,13 +129,13 @@ class TodoServiceImplTest
     }
 
     @Test
-    void givenTodoNameAndApiKey_whenDeleteTodo_thenTodoIsDeleted()
+    void givenIdAndApiKey_whenDeleteTodo()
     {
         Todo todo = new Todo("play soccer", "sports");
-        given(todoRepository.findByName(any()))
+        given(todoRepository.findById(any()))
                 .willReturn(Optional.of(todo));
 
-        assertThatCode(() -> todoService.deleteTodoByName("play soccer"))
+        assertThatCode(() -> todoService.deleteElement(1L))
                 .doesNotThrowAnyException();
     }
 
@@ -149,12 +149,12 @@ class TodoServiceImplTest
     }
 
     @Test
-    void givenWrongNameTodo_whenDeleteTodo_thenThrownException()
+    void givenWrongId_whenDeleteTodo_thenThrownException()
     {
-        given(todoRepository.findByName(anyString()))
+        given(todoRepository.findById(any()))
                 .willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> todoService.deleteTodoByName("wrong name"))
+        assertThatThrownBy(() -> todoService.deleteElement(1L))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("exists");
     }

@@ -94,15 +94,14 @@ public class TodoServiceImpl implements TodoService
     }
 
     @Override
-    public void deleteTodoByName(String todoName)
+    public void deleteElement(Long id)
     {
         String username = utilsSecurityContext.getCurrentUsername();
-        Todo todo = todoIsRegistered(todoName);
-        Long todoIdRegistered = todo.getId();
+        todoIsRegistered(id);
 
-        logger.info("The user: " + username + " has deleted the TODO with the name: " +
-                todo.getName());
-        todoRepository.deleteById(todoIdRegistered);
+        todoRepository.deleteById(id);
+        logger.info("The user: " + username + " has deleted the TODO with the id: " +
+                id);
     }
 
     @Override
@@ -151,14 +150,12 @@ public class TodoServiceImpl implements TodoService
         }
     }
 
-    @NotNull
-    private Todo todoIsRegistered(String todoName)
+    private void todoIsRegistered(Long id)
     {
-        Optional<Todo> todoFound = todoRepository.findByName(todoName);
+        Optional<Todo> todoFound = todoRepository.findById(id);
         if (todoFound.isEmpty())
-            throw new DataNotFoundException("The todo identified by name: " +
-                    todoName + " is not exists");
-        return todoFound.get();
+            throw new DataNotFoundException("The todo identified by id: " +
+                    id + " is not exists");
     }
 
     private UserAdmin isRegisteredUser(String username)
