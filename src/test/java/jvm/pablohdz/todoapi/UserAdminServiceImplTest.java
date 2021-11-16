@@ -17,12 +17,14 @@ import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
 import jvm.pablohdz.todoapi.jwtoken.JwtProvider;
 import jvm.pablohdz.todoapi.mapper.UserAdminMapper;
 import jvm.pablohdz.todoapi.repository.RoleRepository;
+import jvm.pablohdz.todoapi.security.UtilsSecurityContext;
 import jvm.pablohdz.todoapi.service.UserAdminServiceImpl;
 import jvm.pablohdz.todoapi.dto.UserAdminRequest;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -48,6 +50,9 @@ class UserAdminServiceImplTest
     @Mock
     private UserAdminMapper mapper;
 
+    @Mock
+    private UtilsSecurityContext utilsSecurityContext;
+
     @BeforeEach
     void setUp()
     {
@@ -55,7 +60,8 @@ class UserAdminServiceImplTest
                 roleRepository,
                 authenticationManager,
                 jwtProvider,
-                mapper
+                mapper,
+                utilsSecurityContext
         );
     }
 
@@ -109,5 +115,12 @@ class UserAdminServiceImplTest
 
         assertThatThrownBy(() -> underTest.signIn(requestData))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void givenUserAlreadyRegistered_whenDeleteAccount()
+    {
+        assertThatCode(() -> underTest.deleteAccount(1L))
+                .doesNotThrowAnyException();
     }
 }
