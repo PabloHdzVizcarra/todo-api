@@ -2,7 +2,6 @@ package jvm.pablohdz.todoapi.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
-import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.exceptions.DataNotFoundException;
@@ -76,7 +75,7 @@ class TodoServiceImplTest
         given(todoMapper.todoToTodoDto(any()))
                 .willReturn(dto);
 
-        TodoDto todoDto = todoService.createTodo(request);
+        TodoWithIdDto todoDto = todoService.createTodo(request);
 
         assertThat(todoDto.getName())
                 .isNotEmpty()
@@ -86,6 +85,8 @@ class TodoServiceImplTest
                 .isNotNull();
         assertThat(todoDto.getCreatedAt())
                 .isInstanceOf(Date.class);
+        assertThat(todoDto.getId())
+                .isInstanceOf(Long.class);
     }
 
     @Test
@@ -115,7 +116,7 @@ class TodoServiceImplTest
                 .willReturn(List.of(new Todo("clean clothes", "house")));
         given(todoMapper.todoToTodoDto(any()))
                 .willReturn(dto);
-        List<TodoDto> todos = todoService.fetchTodosByApiKey();
+        List<TodoWithIdDto> todos = todoService.fetchTodosByApiKey();
 
         assertThat(todos)
                 .isInstanceOf(Collection.class);

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
@@ -31,17 +30,17 @@ public class TodoController
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TodoDto> create(@RequestBody TodoRequest request)
+    public ResponseEntity<TodoWithIdDto> create(@RequestBody TodoRequest request)
     {
-        TodoDto dto = todoService.createTodo(request);
+        TodoWithIdDto dto = todoService.createTodo(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(dto);
     }
 
     @GetMapping
-    public ResponseEntity<List<TodoDto>> fetchAll()
+    public ResponseEntity<List<TodoWithIdDto>> fetchAll()
     {
-        List<TodoDto> todoList = todoService.fetchTodosByApiKey();
+        List<TodoWithIdDto> todoList = todoService.fetchTodosByApiKey();
         return ResponseEntity.ok(todoList);
     }
 
