@@ -21,4 +21,6 @@ public interface UserAdminService
     AuthenticationResponse signIn(UserSignInRequest dataRequest);
 
     UserAdminDto verifyAccount();
+
+    void deleteAccount(Long idUser);
 }

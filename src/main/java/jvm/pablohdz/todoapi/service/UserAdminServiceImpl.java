@@ -120,6 +120,21 @@ public class UserAdminServiceImpl implements UserAdminService
         return mapper.userAdminToDto(userAdmin);
     }
 
+    @Override
+    public void deleteAccount(Long idUser)
+    {
+        thisUserIsRegistered(idUser);
+        userRepository.deleteById(idUser);
+    }
+
+    private void thisUserIsRegistered(Long idUser)
+    {
+        Optional<UserAdmin> optionalUser = userRepository.findById(idUser);
+        if (optionalUser.isEmpty())
+            throw new DataNotFoundException("the user with the id: " + idUser +
+                    " is not exists");
+    }
+
     private void verifyPasswordsIsEquals(String currentPassword, String password)
     {
         if (!passwordEncoder.matches(currentPassword, password))

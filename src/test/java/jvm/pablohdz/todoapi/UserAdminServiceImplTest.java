@@ -23,6 +23,7 @@ import jvm.pablohdz.todoapi.entity.UserAdmin;
 import jvm.pablohdz.todoapi.exceptions.DuplicateUserData;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -109,5 +110,12 @@ class UserAdminServiceImplTest
 
         assertThatThrownBy(() -> underTest.signIn(requestData))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void givenUserAlreadyRegistered_whenDeleteAccount()
+    {
+        assertThatCode(() -> underTest.deleteAccount(1L))
+                .doesNotThrowAnyException();
     }
 }
