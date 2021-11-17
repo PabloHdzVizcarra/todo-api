@@ -17,6 +17,7 @@ import java.util.List;
 
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.service.TodoService;
 
@@ -61,5 +62,11 @@ public class TodoController
     {
         TodoWithIdDto dataUpdated = todoService.updateTodo(request);
         return ResponseEntity.ok(dataUpdated);
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.PATCH)
+    public ResponseEntity<?> updateState(@RequestBody TodoUpdateStateRequest request)
+    {
+        return ResponseEntity.ok("its works");
     }
 }
