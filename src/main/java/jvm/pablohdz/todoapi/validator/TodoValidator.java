@@ -17,5 +17,12 @@ public interface TodoValidator
 
     TodoRequestWithId validateTodoWithID(TodoRequestWithId data) throws Exception;
 
+    /**
+     * Valid the data provided from the request, the data should be matched with the domain rules.
+     *
+     * @param data the request data
+     * @return equal request if the data are valid
+     * @throws Exception if some data it's wrong
+     */
     TodoUpdateStateRequest validateUpdateStateRequest(TodoUpdateStateRequest data) throws Exception;
 }

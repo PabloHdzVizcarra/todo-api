@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class TodoValidatorImplTest
 {
@@ -30,5 +31,14 @@ class TodoValidatorImplTest
                 .isInstanceOf(Boolean.class);
         assertThat(data.getId())
                 .isInstanceOf(Long.class);
+    }
+
+    @Test
+    void givenWrongRequest_whenTryValidated_thenThrownException()
+    {
+        TodoUpdateStateRequest request = new TodoUpdateStateRequest(null, true);
+
+        assertThatThrownBy(() -> validator.validateUpdateStateRequest(request))
+                .isInstanceOf(RequestValidationException.class);
     }
 }

@@ -99,7 +99,7 @@ public class TodoValidatorImpl implements TodoValidator
 
     @Override
     public TodoUpdateStateRequest validateUpdateStateRequest(TodoUpdateStateRequest data)
-            throws Exception
+            throws RequestValidationException
     {
         Long id = data.getId();
         boolean state = data.isState();
@@ -117,7 +117,7 @@ public class TodoValidatorImpl implements TodoValidator
                     .intersperse(", ")
                     .fold("", String::concat);
 
-            throw new Exception(messageError);
+            throw new RequestValidationException(messageError);
         }
 
         return validation.get();
