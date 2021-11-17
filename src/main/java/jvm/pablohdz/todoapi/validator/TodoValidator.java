@@ -2,6 +2,7 @@ package jvm.pablohdz.todoapi.validator;
 
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 
 public interface TodoValidator
 {
@@ -15,4 +16,6 @@ public interface TodoValidator
     TodoRequest validateTodo(TodoRequest data) throws Exception;
 
     TodoRequestWithId validateTodoWithID(TodoRequestWithId data) throws Exception;
+
+    TodoUpdateStateRequest validateUpdateStateRequest(TodoUpdateStateRequest data) throws Exception;
 }
