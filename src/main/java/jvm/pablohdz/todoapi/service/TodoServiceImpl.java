@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
@@ -115,6 +116,33 @@ public class TodoServiceImpl implements TodoService
         Todo todoSaved = todoRepository.save(todoUpdated);
 
         return todoMapper.todoToTodoWithIdDto(todoSaved);
+    }
+
+    @Override
+    public TodoWithIdDto updateState(TodoUpdateStateRequest request)
+    {
+        TodoUpdateStateRequest validatedData = validateRequestToUpdateState(request);
+        Long id = validatedData.getId();
+        boolean state = validatedData.isState();
+
+        Todo todoFound = getTodoByRepository(id);
+
+        todoFound.setStatus(state);
+        todoFound.setUpdatedAt(new Date());
+        Todo todoUpdated = todoRepository.save(todoFound);
+
+        return todoMapper.todoToTodoWithIdDto(todoUpdated);
+    }
+
+    private TodoUpdateStateRequest validateRequestToUpdateState(TodoUpdateStateRequest request)
+    {
+        try
+        {
+            return todoValidator.validateUpdateStateRequest(request);
+        } catch (Exception e)
+        {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     private @NotNull Todo updateTodoFound(@NotNull Todo todoFound, @NotNull TodoRequestWithId data)
