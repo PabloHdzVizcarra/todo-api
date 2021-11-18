@@ -54,11 +54,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             UserDetails userDetails = userDetailService.loadUserByUsername(username);
             if (userDetails != null)
             {
-
                 createAuthentication(request, userDetails);
             } else
             {
-
                 SecurityContextHolder.getContext().setAuthentication(null);
             }
         } else if (StringUtils.hasText(apiKeyParameterValue))
@@ -70,9 +68,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             {
                 UserDetails userDetails = optionalUserDetails.get();
                 createAuthentication(request, userDetails);
+            } else
+            {
+                SecurityContextHolder.getContext().setAuthentication(null);
             }
 
-            SecurityContextHolder.getContext().setAuthentication(null);
         } else
         {
             SecurityContextHolder.getContext().setAuthentication(null);

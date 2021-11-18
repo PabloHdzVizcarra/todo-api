@@ -8,13 +8,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jvm.pablohdz.todoapi.dto.TodoDto;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.entity.Todo;
 import jvm.pablohdz.todoapi.entity.UserAdmin;
@@ -24,6 +27,7 @@ import jvm.pablohdz.todoapi.mapper.TodoMapper;
 import jvm.pablohdz.todoapi.repository.TodoRepository;
 import jvm.pablohdz.todoapi.repository.UserAdminRepository;
 import jvm.pablohdz.todoapi.security.UtilsSecurityContext;
+import jvm.pablohdz.todoapi.validator.RequestValidationException;
 import jvm.pablohdz.todoapi.validator.TodoValidator;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -188,4 +192,42 @@ class TodoServiceImplTest
         );
     }
 
+    @Test
+    void givenRequestBody_whenTryUpdateState_thenChangeState() throws Exception
+    {
+        TodoUpdateStateRequest todoRequest = new TodoUpdateStateRequest(1L, true);
+        given(todoValidator.validateUpdateStateRequest(any()))
+                .willReturn(todoRequest);
+        Todo todoFound = new Todo("clean my apartment", "house");
+        given(todoRepository.findById(1L))
+                .willReturn(Optional.of(todoFound));
+        given(todoRepository.save(todoFound))
+                .willReturn(todoFound);
+        given(todoMapper.todoToTodoWithIdDto(any()))
+                .willReturn(new TodoWithIdDto(1L, "clen apartment", true,
+                        new Date(), new Date(), "house"
+                ));
+
+        TodoWithIdDto dto = todoService.updateState(createTodoUpdateStateRequest(true));
+        boolean actualState = dto.isStatus();
+
+        assertThat(actualState)
+                .isTrue();
+    }
+
+    @NotNull
+    private TodoUpdateStateRequest createTodoUpdateStateRequest(boolean status)
+    {
+        return new TodoUpdateStateRequest(1L, status);
+    }
+
+    @Test
+    void givenWrongRequest_whenTryUpdated_thenThrowException() throws Exception
+    {
+        given(todoValidator.validateUpdateStateRequest(any()))
+                .willThrow(new RequestValidationException("error"));
+
+        assertThatThrownBy(() -> todoService.updateState(any()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

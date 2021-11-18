@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 import jvm.pablohdz.todoapi.service.TodoService;
 
@@ -61,5 +61,12 @@ public class TodoController
     {
         TodoWithIdDto dataUpdated = todoService.updateTodo(request);
         return ResponseEntity.ok(dataUpdated);
+    }
+
+    @RequestMapping(value = "/state", method = RequestMethod.PATCH)
+    public ResponseEntity<TodoWithIdDto> updateState(@RequestBody TodoUpdateStateRequest request)
+    {
+        TodoWithIdDto dto = todoService.updateState(request);
+        return ResponseEntity.ok(dto);
     }
 }

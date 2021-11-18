@@ -7,6 +7,7 @@ import io.vavr.collection.Seq;
 import io.vavr.control.Validation;
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 
 @Component
 public class TodoValidatorImpl implements TodoValidator
@@ -14,6 +15,7 @@ public class TodoValidatorImpl implements TodoValidator
     private final String NAME_ERROR = "The name must be greater than six characters";
     private final String CATEGORY_ERROR = "The category only have letters characters";
     private final String ID_ERROR = "The id must be a valid integer";
+    private final String STATUS_ERROR = "the status of the todo should only be true or false";
 
     private Validation<Seq<String>, TodoRequest> validateDataTodoRequest(
             String name, String category
@@ -94,4 +96,36 @@ public class TodoValidatorImpl implements TodoValidator
         }
         return dataValidated.get();
     }
+
+    @Override
+    public TodoUpdateStateRequest validateUpdateStateRequest(TodoUpdateStateRequest data)
+            throws RequestValidationException
+    {
+        Long id = data.getId();
+        boolean state = data.isState();
+
+        Validation<Seq<String>, TodoUpdateStateRequest> validation =
+                Validation.combine(
+                        validateId(id),
+                        validateState(state)
+                ).ap(TodoUpdateStateRequest::new);
+
+        if (validation.isInvalid())
+        {
+            Seq<String> errors = validation.getError();
+            String messageError = errors
+                    .intersperse(", ")
+                    .fold("", String::concat);
+
+            throw new RequestValidationException(messageError);
+        }
+
+        return validation.get();
+    }
+
+    private Validation<String, Boolean> validateState(boolean state)
+    {
+        return Validation.valid(state);
+    }
+
 }

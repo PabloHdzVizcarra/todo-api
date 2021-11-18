@@ -4,6 +4,7 @@ import java.util.List;
 
 import jvm.pablohdz.todoapi.dto.TodoRequest;
 import jvm.pablohdz.todoapi.dto.TodoRequestWithId;
+import jvm.pablohdz.todoapi.dto.TodoUpdateStateRequest;
 import jvm.pablohdz.todoapi.dto.TodoWithIdDto;
 
 /**
@@ -33,4 +34,6 @@ public interface TodoService
     void deleteElement(Long id);
 
     TodoWithIdDto updateTodo(TodoRequestWithId request);
+
+    TodoWithIdDto updateState(TodoUpdateStateRequest todoUpdateStateRequest);
 }
