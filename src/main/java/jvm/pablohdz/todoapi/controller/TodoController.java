@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -64,9 +63,10 @@ public class TodoController
         return ResponseEntity.ok(dataUpdated);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.PATCH)
-    public ResponseEntity<?> updateState(@RequestBody TodoUpdateStateRequest request)
+    @RequestMapping(value = "/state", method = RequestMethod.PATCH)
+    public ResponseEntity<TodoWithIdDto> updateState(@RequestBody TodoUpdateStateRequest request)
     {
-        return ResponseEntity.ok("its works");
+        TodoWithIdDto dto = todoService.updateState(request);
+        return ResponseEntity.ok(dto);
     }
 }

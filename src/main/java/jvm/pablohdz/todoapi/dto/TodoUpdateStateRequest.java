@@ -9,6 +9,12 @@ public class TodoUpdateStateRequest
     {
     }
 
+    public TodoUpdateStateRequest(Long id, boolean state)
+    {
+        this.id = id;
+        this.state = state;
+    }
+
     public Long getId()
     {
         return id;
