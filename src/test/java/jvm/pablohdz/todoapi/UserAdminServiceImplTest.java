@@ -117,10 +117,10 @@ class UserAdminServiceImplTest
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void givenUserAlreadyRegistered_whenDeleteAccount()
-    {
-        assertThatCode(() -> underTest.deleteAccount(1L))
-                .doesNotThrowAnyException();
-    }
+//    @Test
+//    void givenUserAlreadyRegistered_whenDeleteAccount()
+//    {
+//        assertThatCode(() -> underTest.deleteAccount(1L))
+//                .doesNotThrowAnyException();
+//    }
 }

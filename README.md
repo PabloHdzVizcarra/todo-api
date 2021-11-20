@@ -1,36 +1,39 @@
 # TODO Api
 
-An API so that any interested person can use it to carry out a project implementing this
-API, for example: web, mobile or desktop application.
+Development Process
 
-## Brain Storm
+## 1. Run project
 
-### Admin User
+This project uses maven to run as it, is a spring application you can run the project
+with the following command in the root directory:
 
-- should be registered to get an API **key**.
-- can delete your account
-- can update your account data
 
-### Normal User
-All operations with normal user should be implemented by admin user registered.
-- create users
-- read users
-- update users
-- delete users by id / username
-- authenticate users
-- list all users registered
-- list users by country
-- list users by gender
-- list users by age
+```shell
+mvn spring-boot:run
+```
 
-### Todo
+Create package
+```shell
+mvn packge
+```
 
-## 1. Introduction
+run application with the package created
+```shell
+java -jar target/todoapi-0.0.1-SNAPSHOT.jar
+```
 
-## 2. Development Process
 
-## 3. Functionality
+## 2. GitHub Actions
 
-## 4. Use Project
+**CI Pipeline** GitHub Action name
 
-## 5. Deployment
+This project has Continuos Delivery (CI) through a GitHub Action, this action simply
+runs the test and makes sure that the test always pass.
+
+The GitHub Action **CI Pipeline** will be triggered every time a pull request is made
+to the main branch of the project.
+
+
+<footer style="display: flex; align-items: center; justify-content: center; margin: 10px">
+    Made with Love by Pablo Hernandez
+</footer>
